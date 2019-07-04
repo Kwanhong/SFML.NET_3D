@@ -4,12 +4,15 @@ using SFML.Audio;
 using SFML.Graphics;
 using System;
 using static SFML_NET_3D.Data;
+using static SFML_NET_3D.Constants;
 using static SFML_NET_3D.Utility;
 
 namespace SFML_NET_3D
 {
     class Game
     {
+        Box box;
+
         public Game()
         {
             Initialize();
@@ -21,6 +24,12 @@ namespace SFML_NET_3D
             window.SetFramerateLimit(30);
             window.Closed += OnClosed;
             window.KeyPressed += OnKeyPressed;
+
+            box = new Box
+            (
+                new Vector3f(100, 100, 100),
+                new Vector3f(winSizeX / 2, winSizeY / 2, winSizeX / 2)
+            );
         }
 
         private void Run()
@@ -45,10 +54,9 @@ namespace SFML_NET_3D
 
         private void Display()
         {
-
-
+            box.Display();
             window.Display();
-            window.Clear(new Color(25,25,25));
+            window.Clear(new Color(25, 25, 25));
         }
 
         #region EVENTS 
