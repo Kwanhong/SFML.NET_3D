@@ -27,12 +27,25 @@ namespace SFML_NET_3D
 
             box = new Box
             (
-                new Vector3f(100, 200, 300),
+                new Vector3f(200, 200, 200),
                 new Vector3f(winSizeX / 2, winSizeY / 2, winSizeX / 2),
-                new Vector3f(0, 0, 0)
+                new Vector3f(ToRadian(-45), -MathF.Atan(1/MathF.Sqrt(2)), 0)
             );
         }
 
+        private void Update()
+        {
+            box.Rotate(new Vector3f(0f, 0.01f, 0));
+        }
+
+        private void Display()
+        {
+            box.Display();
+
+            window.Display();
+            window.Clear(new Color(25, 25, 25));
+        }
+        
         private void Run()
         {
             while (window.IsOpen)
@@ -46,19 +59,6 @@ namespace SFML_NET_3D
         private void HandleEvent()
         {
             window.DispatchEvents();
-        }
-
-        private void Update()
-        {
-            box.Rotate(new Vector3f(0.05f, 0.1f, 0.01f));
-        }
-
-        private void Display()
-        {
-            box.Display();
-            
-            window.Display();
-            window.Clear(new Color(25, 25, 25));
         }
 
         #region EVENTS 

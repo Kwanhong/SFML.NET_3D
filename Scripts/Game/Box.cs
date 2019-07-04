@@ -40,6 +40,15 @@ namespace SFML_NET_3D
                 {Side.RBB,Side.LBB,Side.LBF,Side.RBF},
                 {Side.LBB,Side.LTB,Side.LTF,Side.LBF}
             };
+            Color[] colors = new Color[6] 
+            {
+                new Color(255,0,0),
+                new Color(255,255,0),
+                new Color(0,255,0),
+                new Color(0,255,255),
+                new Color(0,0,255),
+                new Color(255,0,255)
+            };
             VertexArray plane = new VertexArray(PrimitiveType.Quads, 4);
             Vertex[] v = new Vertex[4];
 
@@ -48,8 +57,8 @@ namespace SFML_NET_3D
                 for (int j = 0; j < 4; j++)
                 {
                     v[j] = GetVertexFromSide(sides[i, j]).Point;
-                    v[j].Color = new Color(255, 255, 255, 10);
-                    plane.Append(v[j]);
+                    v[j].Color = colors[i];
+                    plane[(uint)j] = v[j];
                 }
                 window.Draw(plane);
             }
@@ -107,8 +116,13 @@ namespace SFML_NET_3D
         {
             this.Size = size;
             this.Position = position;
+            SetVertexPositions();
             this.Rotation = rotation;
+            Rotate(Rotation);
+        }
 
+        private void SetVertexPositions(){
+            boxVertexArray = new BoxVertexArray();
             Side[] sides = new Side[8]
             {
                 Side.LTF,Side.RTF,Side.LBF,Side.RBF,
@@ -121,9 +135,6 @@ namespace SFML_NET_3D
                 new Vector3f(-1, -1, +1), new Vector3f(+1, -1, +1),
                 new Vector3f(-1, +1, +1), new Vector3f(+1, +1, +1)
             };
-
-            boxVertexArray = new BoxVertexArray();
-
             for (int i = 0; i < 8; i++)
             boxVertexArray.Append(new Vertex3D
             (
