@@ -35,7 +35,7 @@ namespace SFML_NET_3D
 
         private void Update()
         {
-            box.Rotate(new Vector3f(0f, 0.01f, 0));
+            box.Rotate(new Vector3f(0.05f, -0.05f, 0.05f));
         }
 
         private void Display()

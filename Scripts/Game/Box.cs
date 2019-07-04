@@ -42,24 +42,37 @@ namespace SFML_NET_3D
             };
             Color[] colors = new Color[6] 
             {
-                new Color(255,0,0),
-                new Color(255,255,0),
-                new Color(0,255,0),
-                new Color(0,255,255),
-                new Color(0,0,255),
-                new Color(255,0,255)
+                new Color(125,75,75),
+                new Color(150,75,60),
+                new Color(200,80,90),
+                new Color(160,75,90),
+                new Color(180,90,100),
+                new Color(220,120,100)
             };
             VertexArray plane = new VertexArray(PrimitiveType.Quads, 4);
             Vertex[] v = new Vertex[4];
 
+            List<float> depthCount = new List<float>();
+            for (int i = 0; i < 6; i++)
+            {
+                depthCount.Add(0f);
+                for (int j = 0; j < 4; j++)
+                {
+                    Vertex3D v3D = GetVertexFromSide(sides[i, j]);
+                    depthCount[depthCount.Count - 1] += v3D.Offset.Z;
+                }
+            }
+            float average = GetAverageOf(depthCount);
             for (int i = 0; i < 6; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    v[j] = GetVertexFromSide(sides[i, j]).Point;
+                    Vertex3D v3D = GetVertexFromSide(sides[i, j]);
+                    v[j] = v3D.Point;
                     v[j].Color = colors[i];
                     plane[(uint)j] = v[j];
                 }
+                if (depthCount[i] > average)
                 window.Draw(plane);
             }
         }
