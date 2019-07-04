@@ -3,7 +3,7 @@ using SFML.Graphics;
 using SFML.Window;
 using SFML.Audio;
 
-namespace sfml.net_3d
+namespace SFML_NET_3D
 {
     class MainApp
     {
