@@ -9,3 +9,14 @@ D:\Personals\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.AssemblyInfoInputs.
 D:\Personals\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.AssemblyInfo.cs
 D:\Personals\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.dll
 D:\Personals\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.pdb
+C:\Works\Personal\SFML.NET_3D\bin\Debug\netcoreapp2.2\sfml.net_3d.deps.json
+C:\Works\Personal\SFML.NET_3D\bin\Debug\netcoreapp2.2\sfml.net_3d.runtimeconfig.json
+C:\Works\Personal\SFML.NET_3D\bin\Debug\netcoreapp2.2\sfml.net_3d.runtimeconfig.dev.json
+c:\Works\Personal\SFML.NET_3D\bin\Debug\netcoreapp2.2\sfml.net_3d.dll
+c:\Works\Personal\SFML.NET_3D\bin\Debug\netcoreapp2.2\sfml.net_3d.pdb
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.csprojAssemblyReference.cache
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.csproj.CoreCompileInputs.cache
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.AssemblyInfoInputs.cache
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.AssemblyInfo.cs
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.dll
+c:\Works\Personal\SFML.NET_3D\obj\Debug\netcoreapp2.2\sfml.net_3d.pdb

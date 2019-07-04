@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using SFML.Audio;
+using System.Collections.Generic;
 using static SFML_NET_3D.Constants;
 
 namespace SFML_NET_3D
@@ -124,6 +125,27 @@ namespace SFML_NET_3D
             }
             return max;
         }
+
+        /// <summary>
+        /// (List<float>)list의 엘리먼츠 평균 값을 반환합니다.
+        /// </summary>
+        public static float GetAverageOf(List<float> list) 
+        {
+            var sum = 0f;
+            foreach (var element in list)
+                sum += element;
+            return sum / list.Count;
+        }
+        /// <summary>
+        /// (List<int>)list의 엘리먼츠 평균 값을 반환합니다.
+        /// </summary>
+        public static int GetAverageOf(List<int> list) 
+        {
+            var sum = 0;
+            foreach (var element in list)
+                sum += element;
+            return sum / list.Count;
+        }
         #endregion
 
         #region VECTORS
@@ -187,6 +209,39 @@ namespace SFML_NET_3D
                 MathF.Sin(angle) * vector.X +
                 MathF.Cos(angle) * vector.Y
             );
+        }
+
+        /// <summary>
+        /// 각 축을 라디안각 (Vector3f)rotation의 축만큼 회전시킨 (Vector3f)vector를 반환합니다.
+        /// </summary>
+        public static Vector3f RotateVector(Vector3f vector, Vector3f rotation)
+        {
+            float thetaZ = rotation.Z;
+            vector = new Vector3f(
+                MathF.Cos(thetaZ) * vector.X - MathF.Sin(thetaZ) * vector.Y,
+                MathF.Sin(thetaZ) * vector.X + MathF.Cos(thetaZ) * vector.Y,
+                vector.Z
+            );
+            float thetaY = rotation.Y;
+            vector = new Vector3f(
+                MathF.Cos(thetaY) * vector.X - MathF.Sin(thetaY) * vector.Z,
+                vector.Y,
+                MathF.Sin(thetaY) * vector.X + MathF.Cos(thetaY) * vector.Z
+            );
+            float thetaX = rotation.X;
+            return new Vector3f(
+                vector.X,
+                MathF.Cos(thetaX) * vector.Y - MathF.Sin(thetaX) * vector.Z,
+                MathF.Sin(thetaX) * vector.Y + MathF.Cos(thetaX) * vector.Z
+            );
+        }
+
+        /// <summary>
+        /// (Vector3f)vector1의 각 축마다 (Vector3f)vector2의 축을 곱한 값을 반환합니다.
+        /// </summary>
+        public static Vector3f Multiply(Vector3f vector1, Vector3f vector2)
+        {
+            return new Vector3f(vector1.X * vector2.X, vector1.Y * vector2.Y, vector1.Z * vector2.Z);
         }
         #endregion
 

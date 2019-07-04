@@ -11,21 +11,21 @@ using static SFML_NET_3D.Utility;
 namespace SFML_NET_3D
 {
     public enum Side { LTF, RTF, LBF, RBF, LTB, RTB, LBB, RBB };
+
     public class BoxVertexArray
     {
-        public List<Vertex3D> ToList { get => list;}
+        public List<BoxVertex> ToList { get => list; }
 
-        List<Vertex3D> list;
+        List<BoxVertex> list;
         PrimitiveType type;
-        Side side;
 
         public BoxVertexArray(PrimitiveType _type = PrimitiveType.LineStrip)
         {
-            list = new List<Vertex3D>();
+            list = new List<BoxVertex>();
             type = _type;
         }
 
-        public void Append(Vertex3D vertex)
+        public void Append(BoxVertex vertex)
         {
             list.Add(vertex);
         }
@@ -40,73 +40,83 @@ namespace SFML_NET_3D
                 {Side.RBB,Side.LBB,Side.LBF,Side.RBF},
                 {Side.LBB,Side.LTB,Side.LTF,Side.LBF}
             };
+            Color[] colors = new Color[6] 
+            {
+                new Color(125,75,75),
+                new Color(150,75,70),
+                new Color(190,80,90),
+                new Color(160,75,90),
+                new Color(180,90,100),
+                new Color(210,110,115)
+            };
             VertexArray plane = new VertexArray(PrimitiveType.Quads, 4);
             Vertex[] v = new Vertex[4];
 
+            List<float> depthCount = new List<float>();
+            for (int i = 0; i < 6; i++)
+            {
+                depthCount.Add(0f);
+                for (int j = 0; j < 4; j++)
+                {
+                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
+                    depthCount[depthCount.Count - 1] += v3D.Offset.Z;
+                }
+            }
+
+            float average = GetAverageOf(depthCount);
             for (int i = 0; i < 6; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    v[j] = GetVertexFromSide(sides[i, j]).Point;
-                    v[j].Color = new Color(255, 255, 255, 10);
-                    plane.Append(v[j]);
+                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
+                    v[j] = v3D.Point;
+                    v[j].Color = colors[i];
+                    plane[(uint)j] = v[j];
                 }
+                if (depthCount[i] > average)
                 window.Draw(plane);
             }
         }
 
-        private Vertex3D GetVertexFromSide(Side side)
+        private BoxVertex GetVertexFromSide(Side side)
         {
             foreach (var vertex in list)
-            {
                 if (vertex.Side == side) return vertex;
-            }
+
             return list[0];
         }
-        public void Display(Vector3f size)
-        {
-            float[] sizeArray = new float[] { size.X, size.Y, size.Z };
-            float maxSize = GetMax(sizeArray);
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                for (int j = 1; j < list.Count; j++)
-                {
-                    if (i == j) continue;
-
-                    Vertex vertex1 = list[i].Point;
-                    Vertex vertex2 = list[j].Point;
-
-                    if (Distnace(vertex1.Position, vertex2.Position) >= maxSize * 1.001f)
-                        continue;
-
-                    vertex1.Color = new Color(255, 255, 255, 100);
-                    vertex2.Color = new Color(255, 255, 255, 100);
-
-                    VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
-                    line[0] = vertex1;
-                    line[1] = vertex2;
-
-                    window.Draw(line);
-                }
-            }
-        }
     }
-    public class Vertex3D
+
+    public class BoxVertex
     {
-        public Vertex3D(Vector3f pos, Side side)
+        public BoxVertex(Vector3f pos, Vector3f offset, Side side)
         {
             this.Side = side;
             this.Position = pos;
-            this.Point = new Vertex(new Vector2f(Position.X, Position.Y));
+            this.Offset = offset;
+            this.Point = new Vertex(new Vector2f(Position.X + Offset.X, Position.Y + Offset.Y));
         }
 
         public Vertex Point;
         public Side Side { get; private set; }
         public Vector3f Position { get; set; }
+        public Vector3f Offset
+        {
+            get
+            {
+                return offset;
+            }
+            set
+            {
+                offset = value;
+                Point.Position = new Vector2f(Position.X + Offset.X, Position.Y + Offset.Y);
+            }
+        }
         public float X { get => Position.X; }
         public float Y { get => Position.Y; }
         public float Z { get => Position.Z; }
+
+        private Vector3f offset;
     }
 
     public class Box
@@ -120,23 +130,45 @@ namespace SFML_NET_3D
         {
             this.Size = size;
             this.Position = position;
+            SetVertexPositions();
             this.Rotation = rotation;
-
-            boxVertexArray = new BoxVertexArray();
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, -Size.X / 2, -Size.X / 2), Side.LTF));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, -Size.X / 2, -Size.X / 2), Side.RTF));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, Size.X / 2, -Size.X / 2), Side.LBF));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, Size.X / 2, -Size.X / 2), Side.RBF));
-
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, -Size.X / 2, Size.X / 2), Side.LTB));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, -Size.X / 2, Size.X / 2), Side.RTB));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, Size.X / 2, Size.X / 2), Side.LBB));
-            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, Size.X / 2, Size.X / 2), Side.RBB));
+            Rotate(Rotation);
         }
+
+        private void SetVertexPositions(){
+            boxVertexArray = new BoxVertexArray();
+            Side[] sides = new Side[8]
+            {
+                Side.LTF,Side.RTF,Side.LBF,Side.RBF,
+                Side.LTB,Side.RTB,Side.LBB,Side.RBB
+            };
+            Vector3f[] signs = new Vector3f[8]
+            {
+                new Vector3f(-1, -1, -1), new Vector3f(+1, -1, -1),
+                new Vector3f(-1, +1, -1), new Vector3f(+1, +1, -1),
+                new Vector3f(-1, -1, +1), new Vector3f(+1, -1, +1),
+                new Vector3f(-1, +1, +1), new Vector3f(+1, +1, +1)
+            };
+            for (int i = 0; i < 8; i++)
+            boxVertexArray.Append(new BoxVertex
+            (
+                Position,
+                Multiply(Size / 2, signs[i]),
+                sides[i]
+            ));
+        }
+
         public void Update()
         {
-            boxVertexArray.ToList[0].Point.Position += new Vector2f(-1f, -1f);
+
         }
+
+        public void Rotate(Vector3f rotation)
+        {
+            foreach (var boxVertex in boxVertexArray.ToList)
+                boxVertex.Offset = RotateVector(boxVertex.Offset, rotation);
+        }
+
         public void Display()
         {
             boxVertexArray.Display();
