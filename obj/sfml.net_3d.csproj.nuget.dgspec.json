@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\personals\\sfml.net_3d\\sfml.net_3d.csproj": {}
+    "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj": {}
   },
   "projects": {
-    "D:\\personals\\sfml.net_3d\\sfml.net_3d.csproj": {
+    "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\personals\\sfml.net_3d\\sfml.net_3d.csproj",
+        "projectUniqueName": "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj",
         "projectName": "sfml.net_3d",
-        "projectPath": "D:\\personals\\sfml.net_3d\\sfml.net_3d.csproj",
+        "projectPath": "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj",
         "packagesPath": "C:\\Users\\KwanHong\\.nuget\\packages\\",
-        "outputPath": "D:\\personals\\sfml.net_3d\\obj\\",
+        "outputPath": "D:\\Personals\\SFML.NET_3D\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

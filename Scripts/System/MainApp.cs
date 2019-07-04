@@ -1,12 +1,15 @@
 ﻿using System;
+using SFML.Graphics;
+using SFML.Window;
+using SFML.Audio;
 
 namespace sfml.net_3d
 {
-    class Program
+    class MainApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Game game = new Game();
         }
     }
 }
