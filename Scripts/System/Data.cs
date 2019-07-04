@@ -1,8 +1,8 @@
 using SFML.Window;
 using SFML.Graphics;
-using static sfml.net_3d.Constants;
+using static SFML_NET_3D.Constants;
 
-namespace sfml.net_3d
+namespace SFML_NET_3D
 {
     public static class Data
     {

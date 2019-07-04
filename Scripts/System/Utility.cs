@@ -3,13 +3,17 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using SFML.Audio;
-using static sfml.net_3d.Constants;
+using static SFML_NET_3D.Constants;
 
-namespace sfml.net_3d
+namespace SFML_NET_3D
 {
     public class Utility
     {
         #region CALCULATIONS 
+
+        /// <summary>
+        /// (Vector2f)vector를 최소 (float)min에서 최대 (float)max만큼 한정한 값을 반환합니다.
+        /// </summary>
         public static Vector2f Limit(Vector2f vector, float min, float max)
         {
             if (GetMagnitude(vector) < min)
@@ -19,6 +23,9 @@ namespace sfml.net_3d
             return vector;
         }
 
+        /// <summary>
+        /// (Vector2f)vector를 최대 (float)max만큼 한정한 값을 반환합니다.
+        /// </summary>
         public static Vector2f Limit(Vector2f vector, float max)
         {
             if (GetMagnitude(vector) > max)
@@ -26,6 +33,9 @@ namespace sfml.net_3d
             return vector;
         }
 
+        /// <summary>
+        /// (float)var을 최소 (float)min에서 최대 (float)max만큼 한정한 값을 반환합니다.
+        /// </summary>
         public static float Limit(float var, float min, float max)
         {
             if (var < min) var = min;
@@ -33,27 +43,42 @@ namespace sfml.net_3d
             return var;
         }
 
+        /// <summary>
+        /// (float)var을 최대 (float)max만큼 한정한 값을 반환합니다.
+        /// </summary>
         public static float Limit(float var, float max)
         {
             if (var > max) var = max;
             return var;
         }
 
+        /// <summary>
+        /// (float)start1에서 (float)stop1 사이의 값인 (float)value를 (float)start2 에서 (float)stop2 사이의 비율로 치환한 값을 반환합니다.
+        /// </summary>
         public static float Map(float value, float start1, float stop1, float start2, float stop2)
         {
             return ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
         }
 
-        public static float ToDegree(float degree)
+        /// <summary>
+        /// 라디안각 (float)radian 의 디그리각을 반환합니다.
+        /// </summary>
+        public static float ToDegree(float radian)
         {
-            return degree * 180 / MathF.PI;
+            return radian * 180 / MathF.PI;
         }
 
-        public static float ToRadian(float radian)
+        /// <summary>
+        /// 디그리각 (float)degree 의 라디안각을 반환합니다.
+        /// </summary>
+        public static float ToRadian(float degree)
         {
-            return radian * MathF.PI / 180;
+            return degree * MathF.PI / 180;
         }
 
+        /// <summary>
+        /// (float[])array의 엘리먼츠중 최솟값을 반환합니다.
+        /// </summary>
         public static float GetMin(float[] array)
         {
             float min = array[0];
@@ -63,10 +88,36 @@ namespace sfml.net_3d
             }
             return min;
         }
-
+        /// <summary>
+        /// (float[])array의 엘리먼츠중 최댓값을 반환합니다.
+        /// </summary>
         public static float GetMax(float[] array)
         {
             float max = array[0];
+            foreach (var element in array)
+            {
+                if (element >= max) max = element;
+            }
+            return max;
+        }
+        /// <summary>
+        /// (int[])array의 엘리먼츠중 최솟값을 반환합니다.
+        /// </summary>
+        public static int GetMin(int[] array)
+        {
+            int min = array[0];
+            foreach (var element in array)
+            {
+                if (element <= min) min = element;
+            }
+            return min;
+        }
+        /// <summary>
+        /// (int[])array의 엘리먼츠중 최댓값을 반환합니다.
+        /// </summary>
+        public static int GetMax(int[] array)
+        {
+            int max = array[0];
             foreach (var element in array)
             {
                 if (element >= max) max = element;
@@ -77,11 +128,17 @@ namespace sfml.net_3d
 
         #region VECTORS
 
+        /// <summary>
+        /// (Vector2f)vector의 크기를 반환합니다.
+        /// </summary>
         public static float GetMagnitude(Vector2f vector)
         {
             return MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
         }
 
+        /// <summary>
+        /// (Vector2f)vector의 크기를 (float)mag로 한정한 값을 반환합니다.
+        /// </summary>
         public static Vector2f SetMagnitude(Vector2f vector, float mag)
         {
             vector = Normalize(vector);
@@ -89,12 +146,18 @@ namespace sfml.net_3d
             return vector;
         }
 
+        /// <summary>
+        /// 정규화된 (Vector2f)vector를 반환합니다.
+        /// </summary>
         public static Vector2f Normalize(Vector2f vector)
         {
             var magnitude = GetMagnitude(vector);
             return vector /= magnitude;
         }
 
+        /// <summary>
+        /// (Vector2f)pos1과 (Vector2f)pos2 사이의 거리를 반환합니다.
+        /// </summary>
         public static float Distnace(Vector2f pos1, Vector2f pos2)
         {
             return MathF.Sqrt
@@ -104,11 +167,17 @@ namespace sfml.net_3d
             );
         }
 
-        public static float GetAngle(Vector2f pos)
+        /// <summary>
+        /// (Vector2)vector의 원점을 기준으로 한 라디안 각도를 반환합니다.
+        /// </summary>
+        public static float GetAngle(Vector2f vector)
         {
-            return MathF.Atan2(pos.Y, pos.X);
+            return MathF.Atan2(vector.Y, vector.X);
         }
 
+        /// <summary>
+        /// 라디안각 (float)angle만큼 회전시킨 (Vector2f)vector를 반환합니다.
+        /// </summary>
         public static Vector2f RotateVector(Vector2f vector, float angle)
         {
             return new Vector2f
@@ -124,6 +193,9 @@ namespace sfml.net_3d
         #region PERLIN NOISE
         public class NoiseFactors
         {
+            /// <summary>
+            /// (float[])Noise() 메소드에서 사용될 파라미터들을 설정합니다.
+            /// </summary>
             public NoiseFactors(
                 int size = 800,
                 int octave = 10,
@@ -144,6 +216,9 @@ namespace sfml.net_3d
             public int RandomSeed { get; set; }
         }
 
+        /// <summary>
+        /// (NoiseFactors)noiseFactors에 따른 펄린 노이즈 배열을 반환합니다.
+        /// </summary>
         public static float[] Noise(NoiseFactors noiseFactors)
         {
             float[] output = new float[noiseFactors.Size];

@@ -3,9 +3,10 @@ using SFML.System;
 using SFML.Audio;
 using SFML.Graphics;
 using System;
-using static sfml.net_3d.Data;
+using static SFML_NET_3D.Data;
+using static SFML_NET_3D.Utility;
 
-namespace sfml.net_3d
+namespace SFML_NET_3D
 {
     class Game
     {
@@ -39,7 +40,7 @@ namespace sfml.net_3d
 
         private void Update()
         {
-            
+
         }
 
         private void Display()
