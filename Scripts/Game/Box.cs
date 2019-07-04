@@ -13,6 +13,8 @@ namespace SFML_NET_3D
     public enum Side { LTF, RTF, LBF, RBF, LTB, RTB, LBB, RBB };
     public class BoxVertexArray
     {
+        public List<Vertex3D> ToList { get => list;}
+
         List<Vertex3D> list;
         PrimitiveType type;
         Side side;
@@ -99,8 +101,8 @@ namespace SFML_NET_3D
             this.Point = new Vertex(new Vector2f(Position.X, Position.Y));
         }
 
+        public Vertex Point;
         public Side Side { get; private set; }
-        public Vertex Point { get; set; }
         public Vector3f Position { get; set; }
         public float X { get => Position.X; }
         public float Y { get => Position.Y; }
@@ -109,31 +111,35 @@ namespace SFML_NET_3D
 
     public class Box
     {
+        BoxVertexArray boxVertexArray;
         public Vector3f Size { get; set; }
         public Vector3f Position { get; set; }
+        public Vector3f Rotation { get; set; }
 
-        public Box(Vector3f size, Vector3f position)
+        public Box(Vector3f size, Vector3f position, Vector3f rotation)
         {
             this.Size = size;
             this.Position = position;
+            this.Rotation = rotation;
+
+            boxVertexArray = new BoxVertexArray();
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, -Size.X / 2, -Size.X / 2), Side.LTF));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, -Size.X / 2, -Size.X / 2), Side.RTF));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, Size.X / 2, -Size.X / 2), Side.LBF));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, Size.X / 2, -Size.X / 2), Side.RBF));
+
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, -Size.X / 2, Size.X / 2), Side.LTB));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, -Size.X / 2, Size.X / 2), Side.RTB));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, Size.X / 2, Size.X / 2), Side.LBB));
+            boxVertexArray.Append(new Vertex3D(Position + new Vector3f(Size.X / 2, Size.X / 2, Size.X / 2), Side.RBB));
         }
         public void Update()
         {
-
+            boxVertexArray.ToList[0].Point.Position += new Vector2f(-1f, -1f);
         }
         public void Display()
         {
-            BoxVertexArray box = new BoxVertexArray();
-            box.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, -Size.X / 2, -Size.X / 2), Side.LTF));
-            box.Append(new Vertex3D(Position + new Vector3f(+Size.X / 2, -Size.X / 2, -Size.X / 2), Side.RTF));
-            box.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2, +Size.X / 2, -Size.X / 2), Side.LBF));
-            box.Append(new Vertex3D(Position + new Vector3f(+Size.X / 2, +Size.X / 2, -Size.X / 2), Side.RBF));
-
-            box.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2 + 30, -Size.X / 2 - 30, +Size.X / 2), Side.LTB));
-            box.Append(new Vertex3D(Position + new Vector3f(+Size.X / 2 + 30, -Size.X / 2 - 30, +Size.X / 2), Side.RTB));
-            box.Append(new Vertex3D(Position + new Vector3f(-Size.X / 2 + 30, +Size.X / 2 - 30, +Size.X / 2), Side.LBB));
-            box.Append(new Vertex3D(Position + new Vector3f(+Size.X / 2 + 30, +Size.X / 2 - 30, +Size.X / 2), Side.RBB));
-            box.Display();
+            boxVertexArray.Display();
         }
     }
 }

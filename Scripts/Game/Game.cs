@@ -28,7 +28,8 @@ namespace SFML_NET_3D
             box = new Box
             (
                 new Vector3f(100, 100, 100),
-                new Vector3f(winSizeX / 2, winSizeY / 2, winSizeX / 2)
+                new Vector3f(winSizeX / 2, winSizeY / 2, winSizeX / 2),
+                new Vector3f(0, 0, 0)
             );
         }
 
@@ -49,7 +50,7 @@ namespace SFML_NET_3D
 
         private void Update()
         {
-
+            box.Update();
         }
 
         private void Display()
