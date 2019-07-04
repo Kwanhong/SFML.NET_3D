@@ -11,21 +11,21 @@ using static SFML_NET_3D.Utility;
 namespace SFML_NET_3D
 {
     public enum Side { LTF, RTF, LBF, RBF, LTB, RTB, LBB, RBB };
+
     public class BoxVertexArray
     {
-        public List<Vertex3D> ToList { get => list; }
+        public List<BoxVertex> ToList { get => list; }
 
-        List<Vertex3D> list;
+        List<BoxVertex> list;
         PrimitiveType type;
-        Side side;
 
         public BoxVertexArray(PrimitiveType _type = PrimitiveType.LineStrip)
         {
-            list = new List<Vertex3D>();
+            list = new List<BoxVertex>();
             type = _type;
         }
 
-        public void Append(Vertex3D vertex)
+        public void Append(BoxVertex vertex)
         {
             list.Add(vertex);
         }
@@ -58,16 +58,17 @@ namespace SFML_NET_3D
                 depthCount.Add(0f);
                 for (int j = 0; j < 4; j++)
                 {
-                    Vertex3D v3D = GetVertexFromSide(sides[i, j]);
+                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
                     depthCount[depthCount.Count - 1] += v3D.Offset.Z;
                 }
             }
+            
             float average = GetAverageOf(depthCount);
             for (int i = 0; i < 6; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    Vertex3D v3D = GetVertexFromSide(sides[i, j]);
+                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
                     v[j] = v3D.Point;
                     v[j].Color = colors[i];
                     plane[(uint)j] = v[j];
@@ -77,7 +78,7 @@ namespace SFML_NET_3D
             }
         }
 
-        private Vertex3D GetVertexFromSide(Side side)
+        private BoxVertex GetVertexFromSide(Side side)
         {
             foreach (var vertex in list)
                 if (vertex.Side == side) return vertex;
@@ -86,9 +87,9 @@ namespace SFML_NET_3D
         }
     }
 
-    public class Vertex3D
+    public class BoxVertex
     {
-        public Vertex3D(Vector3f pos, Vector3f offset, Side side)
+        public BoxVertex(Vector3f pos, Vector3f offset, Side side)
         {
             this.Side = side;
             this.Position = pos;
@@ -149,7 +150,7 @@ namespace SFML_NET_3D
                 new Vector3f(-1, +1, +1), new Vector3f(+1, +1, +1)
             };
             for (int i = 0; i < 8; i++)
-            boxVertexArray.Append(new Vertex3D
+            boxVertexArray.Append(new BoxVertex
             (
                 Position,
                 Multiply(Size / 2, signs[i]),
