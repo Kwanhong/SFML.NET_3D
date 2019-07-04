@@ -43,11 +43,11 @@ namespace SFML_NET_3D
             Color[] colors = new Color[6] 
             {
                 new Color(125,75,75),
-                new Color(150,75,60),
-                new Color(200,80,90),
+                new Color(150,75,70),
+                new Color(190,80,90),
                 new Color(160,75,90),
                 new Color(180,90,100),
-                new Color(220,120,100)
+                new Color(210,110,115)
             };
             VertexArray plane = new VertexArray(PrimitiveType.Quads, 4);
             Vertex[] v = new Vertex[4];
@@ -62,7 +62,7 @@ namespace SFML_NET_3D
                     depthCount[depthCount.Count - 1] += v3D.Offset.Z;
                 }
             }
-            
+
             float average = GetAverageOf(depthCount);
             for (int i = 0; i < 6; i++)
             {
