@@ -12,6 +12,15 @@ namespace SFML_NET_3D
     {
         #region CALCULATIONS 
 
+        public static float GetAreaOf(Vector2f v1, Vector2f v2, Vector2f v3, Vector2f v4)
+        {
+            return 0.5f *
+            (
+                (v1.X * v2.Y + v2.X * v3.Y + v3.X * v4.Y + v4.X + v1.Y) - 
+                (v2.X * v1.Y + v3.X * v2.Y + v4.X * v3.Y + v1.X * v4.Y)
+            );
+        }
+
         /// <summary>
         /// (Vector2f)vector를 최소 (float)min에서 최대 (float)max만큼 한정한 값을 반환합니다.
         /// </summary>
@@ -129,7 +138,7 @@ namespace SFML_NET_3D
         /// <summary>
         /// (List<float>)list의 엘리먼츠 평균 값을 반환합니다.
         /// </summary>
-        public static float GetAverageOf(List<float> list) 
+        public static float GetAverageOf(List<float> list)
         {
             var sum = 0f;
             foreach (var element in list)
@@ -139,7 +148,7 @@ namespace SFML_NET_3D
         /// <summary>
         /// (List<int>)list의 엘리먼츠 평균 값을 반환합니다.
         /// </summary>
-        public static int GetAverageOf(List<int> list) 
+        public static int GetAverageOf(List<int> list)
         {
             var sum = 0;
             foreach (var element in list)

@@ -38,7 +38,12 @@ namespace SFML_NET_3D
                     boxes[x, y] = new Box
                     (
                         new Vector3f(50, 50, 50),
-                        new Vector3f(Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX), Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),Map((x + y), -12, 12, -winDepth, winDepth * 0.5f)),
+                        new Vector3f
+                        (
+                            Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
+                            Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
+                            winDepth * 0.35f//Map((x + y), -12, 12, -winDepth, winDepth * 0.5f)
+                        ),
                         //new Vector3f((x + y) * 50 + winSizeX * 0.25f, winSizeY / 2,),
                         new Vector3f(ToRadian(-45), -MathF.Atan(1 / MathF.Sqrt(2)), 0),
                         //new Vector3f(0, 0, ToRadian(265.9f)),
@@ -58,7 +63,7 @@ namespace SFML_NET_3D
             foreach (var box in boxes)
             {
                 box.Update();
-                box.Rotate(new Vector3f(0, 0, 0.025f));
+                box.Rotate(new Vector3f(0, 0, 0.01f));
             }
 
         }
