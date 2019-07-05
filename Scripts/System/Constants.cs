@@ -12,5 +12,6 @@ namespace SFML_NET_3D
 
         public const string winTitle = "SFML.NET 3D";
         public static Styles winStyle = Styles.Titlebar;
+        public static ContextSettings winSetting = new ContextSettings(1,1,8);
     }
 }

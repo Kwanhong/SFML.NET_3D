@@ -15,7 +15,8 @@ namespace SFML_NET_3D
             ),
 
             winTitle,
-            winStyle
+            winStyle,
+            winSetting
         );
     }
 }

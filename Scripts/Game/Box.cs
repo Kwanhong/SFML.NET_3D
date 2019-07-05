@@ -18,11 +18,13 @@ namespace SFML_NET_3D
 
         List<BoxVertex> list;
         PrimitiveType type;
+        Color fillColor;
 
-        public BoxVertexArray(PrimitiveType _type = PrimitiveType.LineStrip)
+        public BoxVertexArray(Color _fillColor, PrimitiveType _type = PrimitiveType.LineStrip)
         {
             list = new List<BoxVertex>();
             type = _type;
+            fillColor = _fillColor;
         }
 
         public void Append(BoxVertex vertex)
@@ -40,16 +42,16 @@ namespace SFML_NET_3D
                 {Side.RBB,Side.LBB,Side.LBF,Side.RBF},
                 {Side.LBB,Side.LTB,Side.LTF,Side.LBF}
             };
-            Color[] colors = new Color[6] 
+            Color[] colors = new Color[6]
             {
-                new Color(125,75,75),
-                new Color(150,75,70),
-                new Color(190,80,90),
-                new Color(160,75,90),
-                new Color(180,90,100),
-                new Color(210,110,115)
+                new Color(30,30,30) + fillColor,
+                new Color(40,40,40) + fillColor,
+                new Color(70,70,70) + fillColor,
+                new Color(100,100,100) + fillColor,
+                new Color(130,130,130) + fillColor,
+                new Color(160,160,160) + fillColor
             };
-            VertexArray plane = new VertexArray(PrimitiveType.Quads, 4);
+            VertexArray plane = new VertexArray(type, 4);
             Vertex[] v = new Vertex[4];
 
             List<float> depthCount = new List<float>();
@@ -73,8 +75,8 @@ namespace SFML_NET_3D
                     v[j].Color = colors[i];
                     plane[(uint)j] = v[j];
                 }
-                if (depthCount[i] > average)
-                window.Draw(plane);
+                if (depthCount[i] > average || type == PrimitiveType.LineStrip)
+                    window.Draw(plane);
             }
         }
 
@@ -123,11 +125,31 @@ namespace SFML_NET_3D
     {
         BoxVertexArray boxVertexArray;
         public Vector3f Size { get; set; }
-        public Vector3f Position { get; set; }
-        public Vector3f Rotation { get; set; }
-
-        public Box(Vector3f size, Vector3f position, Vector3f rotation)
+        public PrimitiveType Type { get; set; }
+        public Color FillColor { get; set; }
+        public Vector3f Position { get => pos; set
         {
+            Vector3f prePos = pos;
+            pos = value;
+        } }
+        public Vector3f Rotation { get => rot; set
+        {
+            Vector3f preRot = rot;
+            rot = value;
+            Rotate(rot - preRot);
+        } }
+        private Vector3f pos;
+        private Vector3f rot;
+
+        public Box(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
+        {
+            this.FillColor = new Color
+            (
+                (byte)Limit((float)fillColor.R, 95),
+                (byte)Limit((float)fillColor.G, 95),
+                (byte)Limit((float)fillColor.B, 95)
+            );
+            this.Type = type;
             this.Size = size;
             this.Position = position;
             SetVertexPositions();
@@ -135,8 +157,9 @@ namespace SFML_NET_3D
             Rotate(Rotation);
         }
 
-        private void SetVertexPositions(){
-            boxVertexArray = new BoxVertexArray();
+        private void SetVertexPositions()
+        {
+            boxVertexArray = new BoxVertexArray(this.FillColor, this.Type);
             Side[] sides = new Side[8]
             {
                 Side.LTF,Side.RTF,Side.LBF,Side.RBF,
@@ -150,12 +173,12 @@ namespace SFML_NET_3D
                 new Vector3f(-1, +1, +1), new Vector3f(+1, +1, +1)
             };
             for (int i = 0; i < 8; i++)
-            boxVertexArray.Append(new BoxVertex
-            (
-                Position,
-                Multiply(Size / 2, signs[i]),
-                sides[i]
-            ));
+                boxVertexArray.Append(new BoxVertex
+                (
+                    pos: Position,
+                    offset: Multiply(Size / 2, signs[i]),
+                    side: sides[i]
+                ));
         }
 
         public void Update()

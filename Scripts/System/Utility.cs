@@ -222,13 +222,13 @@ namespace SFML_NET_3D
                 MathF.Sin(thetaZ) * vector.X + MathF.Cos(thetaZ) * vector.Y,
                 vector.Z
             );
-            float thetaY = rotation.Y;
+            float thetaY = rotation.X;
             vector = new Vector3f(
                 MathF.Cos(thetaY) * vector.X - MathF.Sin(thetaY) * vector.Z,
                 vector.Y,
                 MathF.Sin(thetaY) * vector.X + MathF.Cos(thetaY) * vector.Z
             );
-            float thetaX = rotation.X;
+            float thetaX = rotation.Y;
             return new Vector3f(
                 vector.X,
                 MathF.Cos(thetaX) * vector.Y - MathF.Sin(thetaX) * vector.Z,
