@@ -159,9 +159,27 @@ namespace SFML_NET_3D
         }
 
         /// <summary>
+        /// (Vector2f)vector의 크기를 반환합니다.
+        /// </summary>
+        public static float GetMagnitude(Vector3f vector)
+        {
+            return MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y + vector.Z * vector.Z);
+        }
+
+        /// <summary>
         /// (Vector2f)vector의 크기를 (float)mag로 한정한 값을 반환합니다.
         /// </summary>
         public static Vector2f SetMagnitude(Vector2f vector, float mag)
+        {
+            vector = Normalize(vector);
+            vector *= mag;
+            return vector;
+        }
+
+        /// <summary>
+        /// (Vector2f)vector의 크기를 (float)mag로 한정한 값을 반환합니다.
+        /// </summary>
+        public static Vector3f SetMagnitude(Vector3f vector, float mag)
         {
             vector = Normalize(vector);
             vector *= mag;
@@ -174,7 +192,16 @@ namespace SFML_NET_3D
         public static Vector2f Normalize(Vector2f vector)
         {
             var magnitude = GetMagnitude(vector);
-            return vector /= magnitude;
+            return vector / magnitude;
+        }
+
+        /// <summary>
+        /// 정규화된 (Vector3f)vector를 반환합니다.
+        /// </summary>
+        public static Vector3f Normalize(Vector3f vector)
+        {
+            var magnitude = GetMagnitude(vector);
+            return vector / magnitude;
         }
 
         /// <summary>

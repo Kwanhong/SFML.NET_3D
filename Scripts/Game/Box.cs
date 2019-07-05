@@ -127,17 +127,23 @@ namespace SFML_NET_3D
         public Vector3f Size { get; set; }
         public PrimitiveType Type { get; set; }
         public Color FillColor { get; set; }
-        public Vector3f Position { get => pos; set
+        public Vector3f Position
         {
-            Vector3f prePos = pos;
-            pos = value;
-        } }
-        public Vector3f Rotation { get => rot; set
+            get => pos; set
+            {
+                Vector3f prePos = pos;
+                pos = value;
+            }
+        }
+        public Vector3f Rotation
         {
-            Vector3f preRot = rot;
-            rot = value;
-            Rotate(rot - preRot);
-        } }
+            get => rot; set
+            {
+                Vector3f preRot = rot;
+                rot = value;
+                Rotate(rot - preRot);
+            }
+        }
         private Vector3f pos;
         private Vector3f rot;
 
@@ -183,7 +189,19 @@ namespace SFML_NET_3D
 
         public void Update()
         {
+            Rotation = new Vector3f
+            (
+                Map(Mouse.GetPosition(window).X, 0, winSizeX, 0, -MathF.PI * 2),
+                Map(Mouse.GetPosition(window).Y, 0, winSizeY, 0, -MathF.PI * 2),
+                Rotation.Z
+            );
 
+            foreach (var boxVertex in boxVertexArray.ToList)
+            {
+                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 100, 0);
+                boxVertex.Offset = SetMagnitude(boxVertex.Offset, scaleFactor);
+                //Console.WriteLine(mag);
+            }
         }
 
         public void Rotate(Vector3f rotation)
