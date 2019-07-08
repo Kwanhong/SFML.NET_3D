@@ -39,18 +39,27 @@ namespace SFML_NET_3D
                     boxes[x, y] = new Box
                     (
                         boxSize,
+
                         new Vector3f
                         (
-                            Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
-                            Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
-                            -winDepth//Map((x + y), -12, 12, -winDepth, winDepth * 0.5f)
+                           Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
+                           Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
+                           0
                         ),
-                        //new Vector3f((x + y) * 50 + winSizeX * 0.25f, winSizeY / 2,),
+                        // new Vector3f
+                        // (
+                        //     (x + y) * 50 + winSizeX * 0.25f, 
+                        //     winSizeY / 2, 
+                        //     Map((x + y), -12, 12, -winDepth, winDepth)
+                        // ),
+
                         new Vector3f(ToRadian(-45), -MathF.Atan(1 / MathF.Sqrt(2)), 0),
                         //new Vector3f(0, 0, ToRadian(265.9f)),
+
                         new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
-                        PrimitiveType.Quads//(x + y == 0) ? PrimitiveType.Quads : PrimitiveType.LineStrip
+                        PrimitiveType.Quads
                     );
+                    boxes[x, y].View = Box.ViewMode.Perspective;
                 }
             }
 
@@ -64,7 +73,14 @@ namespace SFML_NET_3D
             foreach (var box in boxes)
             {
                 box.Update();
+                box.Rotation = new Vector3f
+                (
+                    Map(Mouse.GetPosition(window).X, 0, winSizeX, 0, -MathF.PI * 2),
+                    Map(Mouse.GetPosition(window).Y, 0, winSizeY, 0, -MathF.PI * 2),
+                    box.Rotation.Z
+                );
                 box.Rotate(new Vector3f(0, 0, 0.01f));
+
             }
 
         }
@@ -80,8 +96,23 @@ namespace SFML_NET_3D
         private void Display()
         {
             SortByZOrder(list, 0, list.Count - 1);
+            
+            List<Color> cols = new List<Color>();
             foreach (var box in list)
+                cols.Add(box.FillColor);
+
+            foreach (var box in list)
+            {
+                box.Type = PrimitiveType.LineStrip;
+                box.FillColor = Color.White;
+                
                 box.Display();
+
+                box.Type = PrimitiveType.Quads;
+                box.FillColor = cols[list.IndexOf(box)];
+                box.Display();
+
+            }
 
             window.Display();
             window.Clear(new Color(35, 35, 35));

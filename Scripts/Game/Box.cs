@@ -14,26 +14,66 @@ namespace SFML_NET_3D
 
     public class BoxVertexArray
     {
+        
+        public class PlaneVertexArray
+        {
+            public PrimitiveType Type { get; set; }
+            public List<BoxVertex> Plane { get; set; }
+
+            private Color fillColor;
+
+            public PlaneVertexArray(PrimitiveType type, Color color)
+            {
+                this.Type = type;
+                fillColor = color;
+                Plane = new List<BoxVertex>();
+            }
+            public void Append(BoxVertex vertex)
+            {
+                Plane.Add(vertex);
+            }
+            public void Display()
+            {
+                VertexArray array = new VertexArray(this.Type, 4);
+                for (int i = 0; i < Plane.Count; i++)
+                {
+                    Vertex ver = Plane[i].Point;
+                    ver.Color = fillColor;
+                    array[(uint)i] = ver;
+                }
+                window.Draw(array);
+            }
+            public float GetDepth()
+            {
+                float sum = 0f;
+                foreach (var vertex in Plane)
+                    sum += vertex.Offset.Z;
+                return sum;
+            }
+        }
+
         public List<BoxVertex> ToList { get => list; }
+        public PrimitiveType Type { get; set; }
+        public Color FillColor
+        {
+            get => fillCol; set
+            {
+                fillCol = value;
+                SetPlaneFillColor();
+            }
+        }
 
         List<BoxVertex> list;
-        PrimitiveType type;
-        Color fillColor;
+        Side[,] vertexSides;
+        Color[] planeColors;
+        Color fillCol;
 
-        public BoxVertexArray(Color _fillColor, PrimitiveType _type = PrimitiveType.LineStrip)
+        public BoxVertexArray(Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
         {
             list = new List<BoxVertex>();
-            type = _type;
-            fillColor = _fillColor;
-        }
-
-        public void Append(BoxVertex vertex)
-        {
-            list.Add(vertex);
-        }
-        public void Display()
-        {
-            Side[,] sides = new Side[6, 4]
+            this.Type = type;
+            this.FillColor = fillColor;
+            vertexSides = new Side[6, 4]
             {
                 {Side.LTF,Side.RTF,Side.RBF,Side.LBF},
                 {Side.LTB,Side.RTB,Side.RBB,Side.LBB},
@@ -42,42 +82,92 @@ namespace SFML_NET_3D
                 {Side.RBB,Side.LBB,Side.LBF,Side.RBF},
                 {Side.LBB,Side.LTB,Side.LTF,Side.LBF}
             };
-            Color[] colors = new Color[6]
+            SetPlaneFillColor();
+        }
+
+        private void SetPlaneFillColor()
+        {
+            planeColors = new Color[6]
             {
-                new Color(30,30,30) + fillColor,
-                new Color(40,40,40) + fillColor,
-                new Color(70,70,70) + fillColor,
-                new Color(100,100,100) + fillColor,
-                new Color(130,130,130) + fillColor,
-                new Color(160,160,160) + fillColor
+                new Color(0,0,0) + FillColor,
+                new Color(20,20,20) + FillColor,
+                new Color(40,40,40) + FillColor,
+                new Color(60,60,60) + FillColor,
+                new Color(80,80,80) + FillColor,
+                new Color(100,100,100) + FillColor
             };
-            VertexArray plane = new VertexArray(type, 4);
-            Vertex[] v = new Vertex[4];
+        }
 
-            List<float> depthCount = new List<float>();
+        public void Append(BoxVertex vertex)
+        {
+            list.Add(vertex);
+        }
+        public void Display()
+        {
+            List<PlaneVertexArray> planes = new List<PlaneVertexArray>();
+
             for (int i = 0; i < 6; i++)
             {
-                depthCount.Add(0f);
-                for (int j = 0; j < 4; j++)
+                PlaneVertexArray plane;
+                SetPlaneData(out plane, i);
+                planes.Add(plane);
+            }
+
+            planes = SortByZOrder(planes, 0, planes.Count - 1);
+
+            foreach (var plane in planes)
+                plane.Display();
+            // for (int i = 0; i < 6; i++)
+            //     planes[i].Display();
+
+            planes.Clear();
+        }
+
+        private void SetPlaneData(out PlaneVertexArray plane, int index)
+        {
+            plane = new PlaneVertexArray(Type, planeColors[index]);
+            for (int j = 0; j < 4; j++)
+            {
+                BoxVertex v3D = GetVertexFromSide(vertexSides[index, j]);
+                plane.Append(v3D);
+            }
+        }
+
+        private List<PlaneVertexArray> SortByZOrder(List<PlaneVertexArray> list, int start, int end)
+        {
+            int i;
+            if (start < end)
+            {
+                i = Partition(list, start, end);
+
+                SortByZOrder(list, start, i - 1);
+                SortByZOrder(list, i + 1, end);
+            }
+
+            return list;
+        }
+
+        private int Partition(List<PlaneVertexArray> list, int start, int end)
+        {
+            PlaneVertexArray temp;
+            PlaneVertexArray p = list[end];
+            int i = start - 1;
+
+            for (int j = start; j <= end - 1; j++)
+            {
+                if (list[j].GetDepth() <= p.GetDepth())
                 {
-                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
-                    depthCount[depthCount.Count - 1] += v3D.Offset.Z;
+                    i++;
+                    temp = list[i];
+                    list[i] = list[j];
+                    list[j] = temp;
                 }
             }
 
-            float average = GetAverageOf(depthCount);
-            for (int i = 0; i < 6; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    BoxVertex v3D = GetVertexFromSide(sides[i, j]);
-                    v[j] = v3D.Point;
-                    v[j].Color = colors[i];
-                    plane[(uint)j] = v[j];
-                }
-                if (depthCount[i] > average || type == PrimitiveType.LineStrip)
-                    window.Draw(plane);
-            }
+            temp = list[i + 1];
+            list[i + 1] = list[end];
+            list[end] = temp;
+            return i + 1;
         }
 
         private BoxVertex GetVertexFromSide(Side side)
@@ -124,9 +214,27 @@ namespace SFML_NET_3D
     public class Box
     {
         BoxVertexArray boxVertexArray;
+        public enum ViewMode { Perspective, Orthographic };
+        public ViewMode View { get; set; } = ViewMode.Perspective;
         public Vector3f Size { get; set; }
-        public PrimitiveType Type { get; set; }
-        public Color FillColor { get; set; }
+        public PrimitiveType Type
+        {
+            get => typ; set
+            {
+                typ = value;
+                if (boxVertexArray != null)
+                    boxVertexArray.Type = typ;
+            }
+        }
+        public Color FillColor
+        {
+            get => col; set
+            {
+                col = value;
+                if (boxVertexArray != null)
+                    boxVertexArray.FillColor = col;
+            }
+        }
         public Vector3f Position
         {
             get => pos; set
@@ -146,6 +254,8 @@ namespace SFML_NET_3D
         }
         private Vector3f pos;
         private Vector3f rot;
+        private PrimitiveType typ;
+        private Color col;
         private List<float> offsetMags = new List<float>();
 
         public Box(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
@@ -159,12 +269,12 @@ namespace SFML_NET_3D
             this.Type = type;
             this.Size = size;
             this.Position = position;
-            SetVertexPositions();
+            SetVertexState();
             this.Rotation = rotation;
             Rotate(Rotation);
         }
 
-        private void SetVertexPositions()
+        private void SetVertexState()
         {
             boxVertexArray = new BoxVertexArray(this.FillColor, this.Type);
             Side[] sides = new Side[8]
@@ -190,12 +300,18 @@ namespace SFML_NET_3D
 
         public void Update()
         {
-            Rotation = new Vector3f
-            (
-                Map(Mouse.GetPosition(window).X, 0, winSizeX, 0, -MathF.PI * 2),
-                Map(Mouse.GetPosition(window).Y, 0, winSizeY, 0, -MathF.PI * 2),
-                Rotation.Z
-            );
+            AddPerspectivePos();
+        }
+
+        public void LateUpdate()
+        {
+            SubtractPerspectivePos();
+        }
+
+        private void AddPerspectivePos()
+        {
+            if (View == ViewMode.Orthographic)
+                return;
 
             offsetMags.Clear();
             foreach (var boxVertex in boxVertexArray.ToList)
@@ -206,8 +322,11 @@ namespace SFML_NET_3D
             }
         }
 
-        public void LateUpdate()
+        private void SubtractPerspectivePos()
         {
+            if (View == ViewMode.Orthographic)
+                return;
+
             foreach (var boxVertex in boxVertexArray.ToList)
             {
                 float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0);

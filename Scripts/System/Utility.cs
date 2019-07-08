@@ -12,6 +12,9 @@ namespace SFML_NET_3D
     {
         #region CALCULATIONS 
 
+        /// <summary>
+        /// (Vector2f)v1, v2, v3, v4를 각 모서리로 가지는 사각형의 넓이를 반환합니다.
+        /// </summary>
         public static float GetAreaOf(Vector2f v1, Vector2f v2, Vector2f v3, Vector2f v4)
         {
             return 0.5f *
