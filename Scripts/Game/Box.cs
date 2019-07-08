@@ -146,6 +146,7 @@ namespace SFML_NET_3D
         }
         private Vector3f pos;
         private Vector3f rot;
+        private List<float> offsetMags = new List<float>();
 
         public Box(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
         {
@@ -196,11 +197,21 @@ namespace SFML_NET_3D
                 Rotation.Z
             );
 
+            offsetMags.Clear();
             foreach (var boxVertex in boxVertexArray.ToList)
             {
-                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 100, 0);
-                boxVertex.Offset = SetMagnitude(boxVertex.Offset, scaleFactor);
-                //Console.WriteLine(mag);
+                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0);
+                offsetMags.Add(GetMagnitude(boxVertex.Offset));
+                boxVertex.Offset = SetMagnitude(boxVertex.Offset, GetMagnitude(boxVertex.Offset) * scaleFactor);
+            }
+        }
+
+        public void LateUpdate()
+        {
+            foreach (var boxVertex in boxVertexArray.ToList)
+            {
+                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0);
+                boxVertex.Offset = SetMagnitude(boxVertex.Offset, offsetMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
             }
         }
 

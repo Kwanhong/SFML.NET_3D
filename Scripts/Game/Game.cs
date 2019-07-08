@@ -14,7 +14,8 @@ namespace SFML_NET_3D
     {
         Box[,] boxes;
         List<Box> list;
-        Vector2i boxCount = new Vector2i(8, 6);
+        Vector2i boxCount = new Vector2i(1, 1);
+        Vector3f boxSize = new Vector3f(100, 100, 100);
 
         public Game()
         {
@@ -37,12 +38,12 @@ namespace SFML_NET_3D
                     byte color = (byte)new Random().Next(255);
                     boxes[x, y] = new Box
                     (
-                        new Vector3f(50, 50, 50),
+                        boxSize,
                         new Vector3f
                         (
                             Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
                             Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
-                            winDepth * 0.35f//Map((x + y), -12, 12, -winDepth, winDepth * 0.5f)
+                            -winDepth//Map((x + y), -12, 12, -winDepth, winDepth * 0.5f)
                         ),
                         //new Vector3f((x + y) * 50 + winSizeX * 0.25f, winSizeY / 2,),
                         new Vector3f(ToRadian(-45), -MathF.Atan(1 / MathF.Sqrt(2)), 0),
@@ -68,6 +69,14 @@ namespace SFML_NET_3D
 
         }
 
+        private void LateUpdate()
+        {
+            foreach (var box in boxes)
+            {
+                box.LateUpdate();
+            }
+        }
+
         private void Display()
         {
             SortByZOrder(list, 0, list.Count - 1);
@@ -85,6 +94,7 @@ namespace SFML_NET_3D
                 HandleEvent();
                 Update();
                 Display();
+                LateUpdate();
             }
         }
 
