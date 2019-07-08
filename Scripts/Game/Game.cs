@@ -14,58 +14,57 @@ namespace SFML_NET_3D
     {
         Box[,] boxes;
         List<Box> list;
-        Vector2i boxCount = new Vector2i(1, 1);
-        Vector3f boxSize = new Vector3f(100, 100, 100);
+        Vector2i boxCount = new Vector2i(5, 5);
+        Vector3f boxSize = new Vector3f(50, 50, 50);
 
         public Game()
         {
-            Initialize();
+            Awake();
             Run();
         }
 
-        private void Initialize()
+        private void Awake()
         {
             window.SetFramerateLimit(60);
             window.Closed += OnClosed;
             window.KeyPressed += OnKeyPressed;
 
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             boxes = new Box[boxCount.X, boxCount.Y];
-
             for (int x = 0; x < boxCount.X; x++)
-            {
                 for (int y = 0; y < boxCount.Y; y++)
-                {
-                    byte color = (byte)new Random().Next(255);
-                    boxes[x, y] = new Box
-                    (
-                        boxSize,
-
-                        new Vector3f
-                        (
-                           Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
-                           Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
-                           0
-                        ),
-                        // new Vector3f
-                        // (
-                        //     (x + y) * 50 + winSizeX * 0.25f, 
-                        //     winSizeY / 2, 
-                        //     Map((x + y), -12, 12, -winDepth, winDepth)
-                        // ),
-
-                        new Vector3f(ToRadian(-45), -MathF.Atan(1 / MathF.Sqrt(2)), 0),
-                        //new Vector3f(0, 0, ToRadian(265.9f)),
-
-                        new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
-                        PrimitiveType.Quads
-                    );
-                    boxes[x, y].View = Box.ViewMode.Perspective;
-                }
-            }
+                    SetBoxState(x, y);
 
             list = new List<Box>();
             foreach (var box in boxes)
                 list.Add(box);
+        }
+
+        private void SetBoxState(int x, int y)
+        {
+            byte color = (byte)new Random().Next(255);
+
+            boxes[x, y] = new Box
+            (
+                boxSize,
+
+                new Vector3f
+                (
+                    Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
+                    Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
+                    0
+                ),
+
+                new Vector3f(ToRadian(-45), -MathF.Atan(1 / MathF.Sqrt(2)), 0),
+
+                new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
+
+                PrimitiveType.Quads
+            );
         }
 
         private void Update()
@@ -80,23 +79,12 @@ namespace SFML_NET_3D
                     box.Rotation.Z
                 );
                 box.Rotate(new Vector3f(0, 0, 0.01f));
-
             }
-
-        }
-
-        private void LateUpdate()
-        {
-            foreach (var box in boxes)
-            {
-                box.LateUpdate();
-            }
+            SortByZOrder(list, 0, list.Count - 1);
         }
 
         private void Display()
         {
-            SortByZOrder(list, 0, list.Count - 1);
-            
             List<Color> cols = new List<Color>();
             foreach (var box in list)
                 cols.Add(box.FillColor);
@@ -105,7 +93,7 @@ namespace SFML_NET_3D
             {
                 box.Type = PrimitiveType.LineStrip;
                 box.FillColor = Color.White;
-                
+
                 box.Display();
 
                 box.Type = PrimitiveType.Quads;
@@ -116,6 +104,14 @@ namespace SFML_NET_3D
 
             window.Display();
             window.Clear(new Color(35, 35, 35));
+        }
+
+        private void LateUpdate()
+        {
+            foreach (var box in boxes)
+            {
+                box.LateUpdate();
+            }
         }
 
         private void Run()
@@ -164,22 +160,28 @@ namespace SFML_NET_3D
             return i + 1;
         }
 
-
+        #region EVENTS 
         private void HandleEvent()
         {
             window.DispatchEvents();
         }
 
-        #region EVENTS 
         private void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            if (e.Code == Keyboard.Key.Escape)
+            if (e.Code == Keyboard.Key.Escape || e.Code == Keyboard.Key.F4)
             {
                 window.Close();
             }
             if (e.Code == Keyboard.Key.F5)
             {
                 Initialize();
+            }
+            if (e.Code == Keyboard.Key.F6)
+            {
+                if (winViewMode == ViewMode.Perspective)
+                    winViewMode = ViewMode.Orthographic;
+                else
+                    winViewMode = ViewMode.Perspective;
             }
         }
         private void OnClosed(object sender, EventArgs e)
