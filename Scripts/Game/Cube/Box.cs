@@ -40,6 +40,7 @@ namespace SFML_NET_3D
             {
                 Vector3f prePos = pos;
                 pos = value;
+                Move(pos - prePos);
             }
         }
         public Vector3f Rotation
@@ -69,8 +70,8 @@ namespace SFML_NET_3D
             );
             this.Type = type;
             this.Size = size;
-            this.Position = position;
             SetVertexState();
+            this.Position = position;
             this.Rotation = rotation;
             Rotate(Rotation);
         }
@@ -137,8 +138,23 @@ namespace SFML_NET_3D
 
         public void Rotate(Vector3f rotation)
         {
+            Vector3f prePosition = this.Position;
+            //this.Position -= new Vector3f(winSizeX / 2, winSizeY / 2, winSizeY / 2);
+
+            this.Position = RotateVector(this.Position, -rotation);
             foreach (var boxVertex in boxVertexArray.ToList)
+            {
                 boxVertex.Offset = RotateVector(boxVertex.Offset, rotation);
+            }
+            //Position += new Vector3f(winSizeX / 2, winSizeY / 2, winSizeY / 2);
+        }
+
+        public void Move(Vector3f movement)
+        {
+            foreach (var boxVertex in boxVertexArray.ToList)
+            {
+                boxVertex.Position += movement;
+            }
         }
 
         public void Display()

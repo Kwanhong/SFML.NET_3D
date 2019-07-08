@@ -49,12 +49,12 @@ namespace SFML_NET_3D
         {
             planeColors = new Color[6]
             {
-                new Color(0,0,0) + FillColor,
-                new Color(20,20,20) + FillColor,
-                new Color(40,40,40) + FillColor,
-                new Color(60,60,60) + FillColor,
-                new Color(80,80,80) + FillColor,
-                new Color(100,100,100) + FillColor
+                new Color(0,0,0)        + FillColor,
+                new Color(20,20,20)     + FillColor,
+                new Color(40,40,40)     + FillColor,
+                new Color(60,60,60)     + FillColor,
+                new Color(80,80,80)     + FillColor,
+                new Color(100,100,100)  + FillColor
             };
         }
 
@@ -62,11 +62,11 @@ namespace SFML_NET_3D
         {
             list.Add(vertex);
         }
-        
+
         public void Display()
         {
             //Add Planes Into Plane List
-            List<PlaneVertexArray> planes = 
+            List<PlaneVertexArray> planes =
             new List<PlaneVertexArray>();
             for (int i = 0; i < 6; i++)
             {

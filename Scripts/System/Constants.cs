@@ -9,12 +9,12 @@ namespace SFML_NET_3D
     {
         public enum ViewMode { Perspective, Orthographic };
 
-        public const uint winSizeX = 800;
-        public const uint winSizeY = 600;
-        public const uint winDepth = 255;
+        public const uint winSizeX = 1920;
+        public const uint winSizeY = 1080;
+        public const uint winDepth = 1600;
 
         public const string winTitle = "SFML.NET 3D";
-        public static Styles winStyle = Styles.Titlebar;
+        public static Styles winStyle = Styles.None;
         public static ContextSettings winSetting = new ContextSettings(1,1,8);
         public static ViewMode winViewMode = ViewMode.Perspective;
     }
