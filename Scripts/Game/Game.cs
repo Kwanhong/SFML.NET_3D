@@ -16,6 +16,7 @@ namespace SFML_NET_3D
         List<Box> list;
         Vector3f boxCount = new Vector3f(5, 5, 5);
         Vector3f boxSize = new Vector3f(50, 50, 50);
+        Vector3f bigBoxSize = new Vector3f(300, 300, 300);
 
         public Game()
         {
@@ -55,13 +56,13 @@ namespace SFML_NET_3D
 
                 new Vector3f
                 (
-                    Map(x, 0, boxCount.X, winSizeX / -2 + winSizeX / (boxCount.X + 1), winSizeX / 2),
-                    Map(y, 0, boxCount.Y, winSizeY / -2 + winSizeY / (boxCount.Y + 1), winSizeY / 2),
-                    Map(z, 0, boxCount.Z, winDepth / -2 + winDepth / (boxCount.Z + 1), winDepth / 2)
+                    Map(x, 0, boxCount.X, bigBoxSize.X / -2 + bigBoxSize.X / (boxCount.X + 1), bigBoxSize.X / 2),
+                    Map(y, 0, boxCount.Y, bigBoxSize.Y / -2 + bigBoxSize.Y / (boxCount.Y + 1), bigBoxSize.Y / 2),
+                    Map(z, 0, boxCount.Z, bigBoxSize.Z / -2 + bigBoxSize.Z / (boxCount.Z + 1), bigBoxSize.Z / 2)
 
-                    //Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
-                    //Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
-                    //Map(z, 0, boxCount.Z, winDepth / (boxCount.Z + 1), winDepth)
+                //Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
+                //Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
+                //Map(z, 0, boxCount.Z, winDepth / (boxCount.Z + 1), winDepth)
                 ),
 
                 new Vector3f(0, 0, 0), //(float)color, (float)((color * 5) % 255), (float)((color * 10) % 255)
@@ -76,14 +77,15 @@ namespace SFML_NET_3D
         {
             foreach (var box in boxes)
             {
+                box.Rotation = new Vector3f
+                (
+                   Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI, -MathF.PI),
+                   Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
+                   box.Rotation.Z
+                );
+                //box.Rotate(new Vector3f(0.01f, 0.01f, 0));
+                box.Position += new Vector3f(winSizeX, winSizeY, winDepth) / 2;
                 box.Update();
-                //box.Rotation = new Vector3f
-                //(
-                //    Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI*0.01f, -MathF.PI*0.01f),
-                //    Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI*0.01f, -MathF.PI*0.01f),
-                //    box.Rotation.Z
-                //);
-                box.Rotate(new Vector3f(0.01f, 0.01f, 0));
             }
             SortByZOrder(list, 0, list.Count - 1);
         }
@@ -96,13 +98,14 @@ namespace SFML_NET_3D
 
             foreach (var box in list)
             {
-                box.Type = PrimitiveType.LineStrip;
-                box.FillColor = Color.White;
+                //box.Type = PrimitiveType.LineStrip;
+                //box.FillColor = Color.White;
 
-                box.Display();
+                //box.Display();
 
                 box.Type = PrimitiveType.Quads;
                 box.FillColor = cols[list.IndexOf(box)];
+
                 box.Display();
 
             }
@@ -116,6 +119,7 @@ namespace SFML_NET_3D
             foreach (var box in boxes)
             {
                 box.LateUpdate();
+                box.Position -= new Vector3f(winSizeX, winSizeY, winDepth) / 2;
             }
         }
 

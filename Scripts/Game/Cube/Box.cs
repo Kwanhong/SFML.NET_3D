@@ -102,6 +102,10 @@ namespace SFML_NET_3D
 
         public void Update()
         {
+            offsetMags.Clear();
+            foreach (var boxVertex in boxVertexArray.ToList)
+                offsetMags.Add(GetMagnitude(boxVertex.Offset));
+
             AddPerspectivePos();
         }
 
@@ -112,26 +116,20 @@ namespace SFML_NET_3D
 
         private void AddPerspectivePos()
         {
-            if (winViewMode == ViewMode.Orthographic)
-                return;
-
-            offsetMags.Clear();
             foreach (var boxVertex in boxVertexArray.ToList)
             {
-                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0);
-                offsetMags.Add(GetMagnitude(boxVertex.Offset));
+                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
+                if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
                 boxVertex.Offset = SetMagnitude(boxVertex.Offset, GetMagnitude(boxVertex.Offset) * scaleFactor);
             }
         }
 
         private void SubtractPerspectivePos()
         {
-            if (winViewMode == ViewMode.Orthographic)
-                return;
-
             foreach (var boxVertex in boxVertexArray.ToList)
             {
-                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0);
+                float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
+                if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
                 boxVertex.Offset = SetMagnitude(boxVertex.Offset, offsetMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
             }
         }
