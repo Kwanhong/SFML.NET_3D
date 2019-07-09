@@ -38,9 +38,6 @@ namespace SFML_NET_3D
                 Point.Position = new Vector2f(Position.X + Offset.X, Position.Y + Offset.Y);
             }
         }
-        public float X { get => Position.X; }
-        public float Y { get => Position.Y; }
-        public float Z { get => Position.Z; }
 
         private Vector3f offset;
         private Vector3f position;

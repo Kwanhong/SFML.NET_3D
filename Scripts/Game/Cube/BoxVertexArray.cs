@@ -23,6 +23,7 @@ namespace SFML_NET_3D
             }
         }
 
+        PlaneVertexArray[] planes;
         List<BoxVertex> list;
         Side[,] vertexSides;
         Color[] planeColors;
@@ -42,6 +43,8 @@ namespace SFML_NET_3D
                 {Side.RBB,Side.LBB,Side.LBF,Side.RBF},
                 {Side.LBB,Side.LTB,Side.LTF,Side.LBF}
             };
+            planes = new PlaneVertexArray[6];
+
             SetPlaneFillColor();
         }
 
@@ -65,12 +68,18 @@ namespace SFML_NET_3D
 
         public void ApplyVertexToRenderer()
         {
-            //Add Planes Into Plane List
             for (int i = 0; i < 6; i++)
             {
-                PlaneVertexArray plane;
-                SetPlaneData(out plane, i);
-                Renderer.Add(plane);
+                SetPlaneData(out planes[i], i);
+                Renderer.Add(planes[i]);
+            }
+        }
+
+        public void RemoveVertexFromRenderer(){
+            for (int i = 0; i < 6; i++)
+            {
+                if (planes[i] == null) return;
+                Renderer.Remove(planes[i]);
             }
         }
 

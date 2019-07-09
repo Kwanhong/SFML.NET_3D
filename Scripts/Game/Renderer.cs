@@ -39,6 +39,10 @@ namespace SFML_NET_3D
             //PlaneList.Clear();
         }
 
+        public static void Remove(PlaneVertexArray plane) {
+            PlaneList.Remove(plane);
+        }
+
         private static List<PlaneVertexArray> SortByZOrder(List<PlaneVertexArray> list, int start, int end)
         {
             int i;

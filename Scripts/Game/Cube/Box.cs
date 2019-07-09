@@ -14,15 +14,14 @@ namespace SFML_NET_3D
 
     public class Box
     {
-        BoxVertexArray boxVertexArray;
-        public Vector3f Size { get; set; }
+        public BoxVertexArray BoxVertexArray { get; set; }
         public PrimitiveType Type
         {
             get => typ; set
             {
                 typ = value;
-                if (boxVertexArray != null)
-                    boxVertexArray.Type = typ;
+                if (BoxVertexArray != null)
+                    BoxVertexArray.Type = typ;
             }
         }
         public Color FillColor
@@ -30,8 +29,8 @@ namespace SFML_NET_3D
             get => col; set
             {
                 col = value;
-                if (boxVertexArray != null)
-                    boxVertexArray.FillColor = col;
+                if (BoxVertexArray != null)
+                    BoxVertexArray.FillColor = col;
             }
         }
         public Vector3f Position
@@ -52,10 +51,20 @@ namespace SFML_NET_3D
                 Rotate(rot - preRot);
             }
         }
+        public Vector3f Size
+        {
+            get => siz; set
+            {
+                Vector3f preSiz = siz;
+                siz = value;
+                //Scale(siz - preSiz);
+            }
+        }
 
         private Color col;
         private Vector3f pos;
         private Vector3f rot;
+        private Vector3f siz;
         private PrimitiveType typ;
         private List<float> offsetMags;
         private List<float> posMags;
@@ -66,9 +75,28 @@ namespace SFML_NET_3D
             posMags = new List<float>();
             this.FillColor = new Color
             (
-                (byte)Map((float)fillColor.R, 0, 255, 0, 155),
-                (byte)Map((float)fillColor.G, 0, 255, 0, 155),
-                (byte)Map((float)fillColor.B, 0, 255, 0, 155),
+                (byte)Limit((float)fillColor.R, 155),
+                (byte)Limit((float)fillColor.G, 155),
+                (byte)Limit((float)fillColor.B, 155),
+                fillColor.A
+            );
+            this.Type = type;
+            this.Size = size;
+            SetVertexState();
+            this.Position = position;
+            this.Rotation = rotation;
+            Rotate(Rotation);
+        }
+
+        private void Initialize(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
+        {
+            offsetMags = new List<float>();
+            posMags = new List<float>();
+            this.FillColor = new Color
+            (
+                (byte)Limit((float)fillColor.R, 155),
+                (byte)Limit((float)fillColor.G, 155),
+                (byte)Limit((float)fillColor.B, 155),
                 fillColor.A
             );
             this.Type = type;
@@ -81,7 +109,7 @@ namespace SFML_NET_3D
 
         private void SetVertexState()
         {
-            boxVertexArray = new BoxVertexArray(this.FillColor, this.Type);
+            BoxVertexArray = new BoxVertexArray(this.FillColor, this.Type);
             Side[] sides = new Side[8]
             {
                 Side.LTF,Side.RTF,Side.LBF,Side.RBF,
@@ -95,21 +123,21 @@ namespace SFML_NET_3D
                 new Vector3f(-1, +1, +1), new Vector3f(+1, +1, +1)
             };
             for (int i = 0; i < 8; i++)
-                boxVertexArray.Append(new BoxVertex
+                BoxVertexArray.Append(new BoxVertex
                 (
                     pos: Position,
                     offset: Multiply(Size / 2, signs[i]),
                     side: sides[i]
                 ));
-                
-            boxVertexArray.ApplyVertexToRenderer();
+
+            BoxVertexArray.ApplyVertexToRenderer();
         }
 
         public void Update()
         {
             posMags.Clear();
             offsetMags.Clear();
-            foreach (var boxVertex in boxVertexArray.ToList)
+            foreach (var boxVertex in BoxVertexArray.ToList)
             {
                 posMags.Add(GetMagnitude(boxVertex.Position));
                 offsetMags.Add(GetMagnitude(boxVertex.Offset));
@@ -125,7 +153,7 @@ namespace SFML_NET_3D
 
         private void AddPerspectivePos()
         {
-            foreach (var boxVertex in boxVertexArray.ToList)
+            foreach (var boxVertex in BoxVertexArray.ToList)
             {
                 float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
                 if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
@@ -136,32 +164,41 @@ namespace SFML_NET_3D
 
         private void SubtractPerspectivePos()
         {
-            foreach (var boxVertex in boxVertexArray.ToList)
+            foreach (var boxVertex in BoxVertexArray.ToList)
             {
                 float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
                 if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
-                boxVertex.Offset = SetMagnitude(boxVertex.Offset, offsetMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
-                boxVertex.Position = SetMagnitude(boxVertex.Position, posMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
+                boxVertex.Offset = SetMagnitude(boxVertex.Offset, offsetMags[BoxVertexArray.ToList.IndexOf(boxVertex)]);
+                boxVertex.Position = SetMagnitude(boxVertex.Position, posMags[BoxVertexArray.ToList.IndexOf(boxVertex)]);
             }
         }
 
         public void Rotate(Vector3f rotation)
         {
-            Vector3f prePosition = this.Position;
-
-            this.Position = RotateVector(this.Position, -rotation);
-            foreach (var boxVertex in boxVertexArray.ToList)
+            foreach (var boxVertex in BoxVertexArray.ToList)
             {
+                boxVertex.Position = RotateVector(boxVertex.Position, -rotation);
                 boxVertex.Offset = RotateVector(boxVertex.Offset, new Vector3f(rotation.X, rotation.Y, -rotation.Z));
             }
         }
 
         public void Move(Vector3f movement)
         {
-            foreach (var boxVertex in boxVertexArray.ToList)
+            foreach (var boxVertex in BoxVertexArray.ToList)
             {
                 boxVertex.Position += movement;
             }
+        }
+
+        public void Scale(Vector3f scaleFactor)
+        {
+            Retire();
+            Initialize(Multiply(Size, new Vector3f(1.01f, 1, 1)), Position, Rotation, FillColor, Type);
+        }
+
+        public void Retire()
+        {
+            BoxVertexArray.RemoveVertexFromRenderer();
         }
     }
 }

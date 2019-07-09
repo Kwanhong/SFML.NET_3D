@@ -14,11 +14,11 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(12, 12, 1);
+        Vector3f boxCount = new Vector3f(1, 10, 10);
         Vector3f boxSize = new Vector3f(20, 20, 20);
 
         bool mousePressed = false;
-        Vector2i mousePrePos = new Vector2i(0,0);
+        Vector2i mousePrePos = new Vector2i(0, 0);
 
         public Game()
         {
@@ -61,21 +61,22 @@ namespace SFML_NET_3D
                 size: boxSize,
                 position: new Vector3f
                 (
-                    x * boxSize.X * 1.1f - ((boxCount.X - 1) * boxSize.X * 1.1f) / 2,
-                    y * boxSize.Y * 1.1f - ((boxCount.Y - 1) * boxSize.Y * 1.1f) / 2,
-                    z * boxSize.Z * 1.1f - ((boxCount.Z - 1) * boxSize.Z * 1.1f) / 2
+                    x * boxSize.X * 1.2f - ((boxCount.X - 1) * boxSize.X * 1.2f) / 2,
+                    y * boxSize.Y * 1.2f - ((boxCount.Y - 1) * boxSize.Y * 1.2f) / 2,
+                    z * boxSize.Z * 1.2f - ((boxCount.Z - 1) * boxSize.Z * 1.2f) / 2
                 ),
-                rotation: new Vector3f(0, 0, 0),
-                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 255), (byte)Map(y, 0, boxCount.Y, 1, 255), (byte)Map(y, 0, boxCount.Y, 1, 255)),
+                rotation: new Vector3f(MathF.PI / 4f, -MathF.Atan(1 / MathF.Sqrt(2)),-MathF.PI/2),
+                fillColor: new Color((byte)Map(y, 0, boxCount.Y, 1, 255), (byte)Map(z, 0, boxCount.Z, 1, 255), (byte)Map(z, 0, boxCount.Z, 1, 255)),
                 type: PrimitiveType.Quads
             );
         }
 
         private void Update()
         {
-            foreach (var box in boxList)
+            for (int i = 0; i < boxList.Count; i++)
             {
-                box.Update();
+                boxList[i].Scale(new Vector3f(1,1,1.2f));
+                boxList[i].Update();
             }
         }
 
@@ -188,16 +189,17 @@ namespace SFML_NET_3D
             if (mousePressed)
             {
                 foreach (var box in boxList)
-                box.Rotation = new Vector3f
-                (
-                   Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI, -MathF.PI),
-                   Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
-                   box.Rotation.Z
-                );
+                    box.Rotation = new Vector3f
+                    (
+                       Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI, -MathF.PI),
+                       Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
+                       box.Rotation.Z
+                    );
             }
         }
 
-        private void OnMouseButtonReleased(object sender, MouseButtonEventArgs e) {
+        private void OnMouseButtonReleased(object sender, MouseButtonEventArgs e)
+        {
             if (e.Button == Mouse.Button.Right && mousePressed)
             {
                 mousePressed = false;

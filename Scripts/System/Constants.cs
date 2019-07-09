@@ -11,11 +11,11 @@ namespace SFML_NET_3D
 
         public const uint winSizeX = 800;
         public const uint winSizeY = 600;
-        public const uint winDepth = 200;
+        public const uint winDepth = 400;
 
         public const string winTitle = "SFML.NET 3D";
         public static Styles winStyle = Styles.Titlebar;
         public static ContextSettings winSetting = new ContextSettings(1,1,8);
-        public static ViewMode winViewMode = ViewMode.Perspective;
+        public static ViewMode winViewMode = ViewMode.Orthographic;
     }
 }
