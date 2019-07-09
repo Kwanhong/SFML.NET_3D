@@ -14,8 +14,8 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(5, 5,5);
-        Vector3f boxSize = new Vector3f(30, 30, 30);
+        Vector3f boxCount = new Vector3f(5, 5, 5);
+        Vector3f boxSize = new Vector3f(20, 20, 20);
 
         public Game()
         {
@@ -50,19 +50,17 @@ namespace SFML_NET_3D
 
         private void SetBoxState(int x, int y, int z)
         {
-            byte color = (byte)new Random().Next(255);
-
             boxes[x, y, z] = new Box
             (
                 size: boxSize,
                 position: new Vector3f
                 (
-                    x * boxSize.X - ((boxCount.X - 1) * boxSize.X) / 2,
-                    y * boxSize.Y - ((boxCount.Y - 1) * boxSize.Y) / 2,
-                    z * boxSize.Z - ((boxCount.Z - 1) * boxSize.Z) / 2
+                    x * boxSize.X * 1.1f - ((boxCount.X - 1) * boxSize.X * 1.1f) / 2,
+                    y * boxSize.Y * 1.1f - ((boxCount.Y - 1) * boxSize.Y * 1.1f) / 2,
+                    z * boxSize.Z * 1.1f - ((boxCount.Z - 1) * boxSize.Z * 1.1f) / 2
                 ),
                 rotation: new Vector3f(0, 0, 0),
-                fillColor: new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
+                fillColor: new Color((byte)((x) * 50), (byte)((y) * 50), (byte)((z) * 50)),
                 type: PrimitiveType.Quads
             );
         }
@@ -129,6 +127,36 @@ namespace SFML_NET_3D
                     winViewMode = ViewMode.Orthographic;
                 else
                     winViewMode = ViewMode.Perspective;
+            }
+            if (e.Code == Keyboard.Key.W)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(0, 0.05f, 0));
+            }
+            if (e.Code == Keyboard.Key.A)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(0.05f, 0, 0));
+            }
+            if (e.Code == Keyboard.Key.S)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(0, -0.05f, 0));
+            }
+            if (e.Code == Keyboard.Key.D)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(-0.05f, 0, 0));
+            }
+            if (e.Code == Keyboard.Key.Q)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(0, 0, -0.05f));
+            }
+            if (e.Code == Keyboard.Key.E)
+            {
+                foreach (var box in boxList)
+                    box.Rotate(new Vector3f(0, 0, 0.05f));
             }
         }
         private void OnClosed(object sender, EventArgs e)

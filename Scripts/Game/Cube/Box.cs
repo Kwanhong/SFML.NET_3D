@@ -148,14 +148,12 @@ namespace SFML_NET_3D
         public void Rotate(Vector3f rotation)
         {
             Vector3f prePosition = this.Position;
-            //this.Position -= new Vector3f(winSizeX / 2, winSizeY / 2, winSizeY / 2);
 
             this.Position = RotateVector(this.Position, -rotation);
             foreach (var boxVertex in boxVertexArray.ToList)
             {
-                boxVertex.Offset = RotateVector(boxVertex.Offset, rotation);
+                boxVertex.Offset = RotateVector(boxVertex.Offset, new Vector3f(rotation.X, rotation.Y, -rotation.Z));
             }
-            //Position += new Vector3f(winSizeX / 2, winSizeY / 2, winSizeY / 2);
         }
 
         public void Move(Vector3f movement)
