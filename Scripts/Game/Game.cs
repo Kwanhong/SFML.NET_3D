@@ -13,10 +13,9 @@ namespace SFML_NET_3D
     class Game
     {
         Box[,,] boxes;
-        List<Box> list;
-        Vector3f boxCount = new Vector3f(5, 5, 5);
-        Vector3f boxSize = new Vector3f(50, 50, 50);
-        Vector3f bigBoxSize = new Vector3f(300, 300, 300);
+        List<Box> boxList;
+        Vector3f boxCount = new Vector3f(5, 5,5);
+        Vector3f boxSize = new Vector3f(30, 30, 30);
 
         public Game()
         {
@@ -26,7 +25,7 @@ namespace SFML_NET_3D
 
         private void Awake()
         {
-            window.SetFramerateLimit(60);
+            window.SetFramerateLimit(30);
             window.Closed += OnClosed;
             window.KeyPressed += OnKeyPressed;
 
@@ -38,14 +37,15 @@ namespace SFML_NET_3D
             Renderer.Clear();
 
             boxes = new Box[(int)boxCount.X, (int)boxCount.Y, (int)boxCount.Z];
-            for (int x = 0; x < boxCount.X; x++)
-                for (int y = 0; y < boxCount.Y; y++)
-                    for (int z = 0; z < boxCount.Y; z++)
+            for (int x = 0; x < (int)boxCount.X; x++)
+                for (int y = 0; y < (int)boxCount.Y; y++)
+                    for (int z = 0; z < (int)boxCount.Z; z++)
                         SetBoxState(x, y, z);
 
-            list = new List<Box>();
+            boxList = new List<Box>();
+
             foreach (var box in boxes)
-                list.Add(box);
+                boxList.Add(box);
         }
 
         private void SetBoxState(int x, int y, int z)
@@ -54,30 +54,22 @@ namespace SFML_NET_3D
 
             boxes[x, y, z] = new Box
             (
-                boxSize,
-
-                new Vector3f
+                size: boxSize,
+                position: new Vector3f
                 (
-                    Map(x, 0, boxCount.X, bigBoxSize.X / -2 + bigBoxSize.X / (boxCount.X + 1), bigBoxSize.X / 2),
-                    Map(y, 0, boxCount.Y, bigBoxSize.Y / -2 + bigBoxSize.Y / (boxCount.Y + 1), bigBoxSize.Y / 2),
-                    Map(z, 0, boxCount.Z, bigBoxSize.Z / -2 + bigBoxSize.Z / (boxCount.Z + 1), bigBoxSize.Z / 2)
-
-                //Map(x, 0, boxCount.X, winSizeX / (boxCount.X + 1), winSizeX),
-                //Map(y, 0, boxCount.Y, winSizeY / (boxCount.Y + 1), winSizeY),
-                //Map(z, 0, boxCount.Z, winDepth / (boxCount.Z + 1), winDepth)
+                    x * boxSize.X - ((boxCount.X - 1) * boxSize.X) / 2,
+                    y * boxSize.Y - ((boxCount.Y - 1) * boxSize.Y) / 2,
+                    z * boxSize.Z - ((boxCount.Z - 1) * boxSize.Z) / 2
                 ),
-
-                new Vector3f(0, 0, 0), //(float)color, (float)((color * 5) % 255), (float)((color * 10) % 255)
-
-                new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
-
-                PrimitiveType.Quads
+                rotation: new Vector3f(0, 0, 0),
+                fillColor: new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
+                type: PrimitiveType.Quads
             );
         }
 
         private void Update()
         {
-            foreach (var box in boxes)
+            foreach (var box in boxList)
             {
                 box.Rotation = new Vector3f
                 (
@@ -85,30 +77,12 @@ namespace SFML_NET_3D
                    Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
                    box.Rotation.Z
                 );
-                //box.Rotate(new Vector3f(0.01f, 0.01f, 0));
                 box.Update();
             }
-            SortByZOrder(list, 0, list.Count - 1);
         }
 
         private void Display()
         {
-            List<Color> cols = new List<Color>();
-            foreach (var box in list)
-                cols.Add(box.FillColor);
-
-            foreach (var box in list)
-            {
-                // box.Type = PrimitiveType.LineStrip;
-                // box.FillColor = Color.White;
-
-                // box.Display();
-
-                box.Type = PrimitiveType.Quads;
-                box.FillColor = cols[list.IndexOf(box)];
-
-            }
-
             Renderer.Render();
             window.Display();
             window.Clear(new Color(25, 25, 25));
@@ -116,7 +90,7 @@ namespace SFML_NET_3D
 
         private void LateUpdate()
         {
-            foreach (var box in boxes)
+            foreach (var box in boxList)
             {
                 box.LateUpdate();
             }
@@ -131,41 +105,6 @@ namespace SFML_NET_3D
                 Display();
                 LateUpdate();
             }
-        }
-
-        private void SortByZOrder(List<Box> list, int start, int end)
-        {
-            int i;
-            if (start < end)
-            {
-                i = Partition(list, start, end);
-
-                SortByZOrder(list, start, i - 1);
-                SortByZOrder(list, i + 1, end);
-            }
-        }
-
-        private int Partition(List<Box> list, int start, int end)
-        {
-            Box temp;
-            Box p = list[end];
-            int i = start - 1;
-
-            for (int j = start; j <= end - 1; j++)
-            {
-                if (list[j].Position.Z >= p.Position.Z)
-                {
-                    i++;
-                    temp = list[i];
-                    list[i] = list[j];
-                    list[j] = temp;
-                }
-            }
-
-            temp = list[i + 1];
-            list[i + 1] = list[end];
-            list[end] = temp;
-            return i + 1;
         }
 
         #region EVENTS 
