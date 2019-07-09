@@ -63,25 +63,15 @@ namespace SFML_NET_3D
             list.Add(vertex);
         }
 
-        public void Display()
+        public void ApplyVertexToRenderer()
         {
             //Add Planes Into Plane List
-            List<PlaneVertexArray> planes =
-            new List<PlaneVertexArray>();
             for (int i = 0; i < 6; i++)
             {
                 PlaneVertexArray plane;
                 SetPlaneData(out plane, i);
-                planes.Add(plane);
+                Renderer.Add(plane);
             }
-
-            //Sort Plane List By Z-Order
-            planes = SortByZOrder(planes, 0, planes.Count - 1);
-
-            //Display Planes One By One;
-            for (int i = 0; i < 6; i++)
-                planes[i].Display();
-            planes.Clear();
         }
 
         private void SetPlaneData(out PlaneVertexArray plane, int index)
@@ -92,43 +82,6 @@ namespace SFML_NET_3D
                 BoxVertex v3D = GetVertexFromSide(vertexSides[index, j]);
                 plane.Append(v3D);
             }
-        }
-
-        private List<PlaneVertexArray> SortByZOrder(List<PlaneVertexArray> list, int start, int end)
-        {
-            int i;
-            if (start < end)
-            {
-                i = Partition(list, start, end);
-
-                SortByZOrder(list, start, i - 1);
-                SortByZOrder(list, i + 1, end);
-            }
-
-            return list;
-        }
-
-        private int Partition(List<PlaneVertexArray> list, int start, int end)
-        {
-            PlaneVertexArray temp;
-            PlaneVertexArray p = list[end];
-            int i = start - 1;
-
-            for (int j = start; j <= end - 1; j++)
-            {
-                if (list[j].GetDepth() <= p.GetDepth())
-                {
-                    i++;
-                    temp = list[i];
-                    list[i] = list[j];
-                    list[j] = temp;
-                }
-            }
-
-            temp = list[i + 1];
-            list[i + 1] = list[end];
-            list[end] = temp;
-            return i + 1;
         }
 
         private BoxVertex GetVertexFromSide(Side side)

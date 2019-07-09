@@ -101,6 +101,8 @@ namespace SFML_NET_3D
                     offset: Multiply(Size / 2, signs[i]),
                     side: sides[i]
                 ));
+                
+            boxVertexArray.ApplyVertexToRenderer();
         }
 
         public void Update()
@@ -162,11 +164,6 @@ namespace SFML_NET_3D
             {
                 boxVertex.Position += movement;
             }
-        }
-
-        public void Display()
-        {
-            boxVertexArray.Display();
         }
     }
 }

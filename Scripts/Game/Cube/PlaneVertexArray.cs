@@ -31,8 +31,9 @@ namespace SFML_NET_3D
 
         public void Display()
         {
-            for (int i = 0; i < Plane.Count; i++)
-                Plane[i].Position += new Vector3f(winSizeX, winSizeY, winDepth) / 2;
+            foreach (var plane in Plane)
+                plane.Position += new Vector3f(winSizeX, winSizeY, winDepth) / 2;
+
             VertexArray array = new VertexArray(this.Type, 4);
             for (int i = 0; i < Plane.Count; i++)
             {
@@ -41,16 +42,17 @@ namespace SFML_NET_3D
                 array[(uint)i] = ver;
             }
             window.Draw(array);
-            for (int i = 0; i < Plane.Count; i++)
-                Plane[i].Position -= new Vector3f(winSizeX, winSizeY, winDepth) / 2;
+            
+            foreach (var plane in Plane)
+                plane.Position -= new Vector3f(winSizeX, winSizeY, winDepth) / 2;
         }
 
         public float GetDepth()
         {
             float sum = 0f;
-            foreach (var vertex in Plane)
-                sum += vertex.Offset.Z;
-            return sum;
+            for (int i = 0; i < Plane.Count; i++)
+                sum += (Plane[i].Offset.Z - Plane[i].Position.Z);
+            return (sum);
         }
     }
 }

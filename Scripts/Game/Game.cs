@@ -35,6 +35,8 @@ namespace SFML_NET_3D
 
         private void Initialize()
         {
+            Renderer.Clear();
+
             boxes = new Box[(int)boxCount.X, (int)boxCount.Y, (int)boxCount.Z];
             for (int x = 0; x < boxCount.X; x++)
                 for (int y = 0; y < boxCount.Y; y++)
@@ -97,18 +99,17 @@ namespace SFML_NET_3D
 
             foreach (var box in list)
             {
-                box.Type = PrimitiveType.LineStrip;
-                box.FillColor = Color.White;
+                // box.Type = PrimitiveType.LineStrip;
+                // box.FillColor = Color.White;
 
-                box.Display();
+                // box.Display();
 
                 box.Type = PrimitiveType.Quads;
                 box.FillColor = cols[list.IndexOf(box)];
 
-                box.Display();
-
             }
 
+            Renderer.Render();
             window.Display();
             window.Clear(new Color(25, 25, 25));
         }
