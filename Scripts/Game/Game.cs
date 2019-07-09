@@ -84,7 +84,6 @@ namespace SFML_NET_3D
                    box.Rotation.Z
                 );
                 //box.Rotate(new Vector3f(0.01f, 0.01f, 0));
-                box.Position += new Vector3f(winSizeX, winSizeY, winDepth) / 2;
                 box.Update();
             }
             SortByZOrder(list, 0, list.Count - 1);
@@ -98,10 +97,10 @@ namespace SFML_NET_3D
 
             foreach (var box in list)
             {
-                //box.Type = PrimitiveType.LineStrip;
-                //box.FillColor = Color.White;
+                box.Type = PrimitiveType.LineStrip;
+                box.FillColor = Color.White;
 
-                //box.Display();
+                box.Display();
 
                 box.Type = PrimitiveType.Quads;
                 box.FillColor = cols[list.IndexOf(box)];
@@ -119,7 +118,6 @@ namespace SFML_NET_3D
             foreach (var box in boxes)
             {
                 box.LateUpdate();
-                box.Position -= new Vector3f(winSizeX, winSizeY, winDepth) / 2;
             }
         }
 

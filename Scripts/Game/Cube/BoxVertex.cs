@@ -22,14 +22,17 @@ namespace SFML_NET_3D
 
         public Vertex Point;
         public Side Side { get; private set; }
-        public Vector3f Position { get; set; }
+        public Vector3f Position
+        {
+            get => position; set
+            {
+                position = value;
+                Point.Position = new Vector2f(Position.X + Offset.X, Position.Y + Offset.Y);
+            }
+        }
         public Vector3f Offset
         {
-            get
-            {
-                return offset;
-            }
-            set
+            get => offset; set
             {
                 offset = value;
                 Point.Position = new Vector2f(Position.X + Offset.X, Position.Y + Offset.Y);
@@ -40,5 +43,6 @@ namespace SFML_NET_3D
         public float Z { get => Position.Z; }
 
         private Vector3f offset;
+        private Vector3f position;
     }
 }

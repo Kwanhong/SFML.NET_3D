@@ -49,12 +49,12 @@ namespace SFML_NET_3D
         {
             planeColors = new Color[6]
             {
-                new Color(0,0,0)        + FillColor,
-                new Color(20,20,20)     + FillColor,
-                new Color(40,40,40)     + FillColor,
-                new Color(60,60,60)     + FillColor,
-                new Color(80,80,80)     + FillColor,
-                new Color(100,100,100)  + FillColor
+                new Color(0,0,0,0)        + FillColor,
+                new Color(20,20,20,0)     + FillColor,
+                new Color(40,40,40,0)     + FillColor,
+                new Color(60,60,60,0)     + FillColor,
+                new Color(80,80,80,0)     + FillColor,
+                new Color(100,100,100,0)  + FillColor
             };
         }
 

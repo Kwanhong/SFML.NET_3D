@@ -58,15 +58,18 @@ namespace SFML_NET_3D
         private Vector3f rot;
         private PrimitiveType typ;
         private List<float> offsetMags;
+        private List<float> posMags;
 
         public Box(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
         {
             offsetMags = new List<float>();
+            posMags = new List<float>();
             this.FillColor = new Color
             (
                 (byte)Map((float)fillColor.R, 0, 255, 0, 155),
                 (byte)Map((float)fillColor.G, 0, 255, 0, 155),
-                (byte)Map((float)fillColor.B, 0, 255, 0, 155)
+                (byte)Map((float)fillColor.B, 0, 255, 0, 155),
+                fillColor.A
             );
             this.Type = type;
             this.Size = size;
@@ -102,9 +105,13 @@ namespace SFML_NET_3D
 
         public void Update()
         {
+            posMags.Clear();
             offsetMags.Clear();
             foreach (var boxVertex in boxVertexArray.ToList)
+            {
+                posMags.Add(GetMagnitude(boxVertex.Position));
                 offsetMags.Add(GetMagnitude(boxVertex.Offset));
+            }
 
             AddPerspectivePos();
         }
@@ -121,6 +128,7 @@ namespace SFML_NET_3D
                 float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
                 if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
                 boxVertex.Offset = SetMagnitude(boxVertex.Offset, GetMagnitude(boxVertex.Offset) * scaleFactor);
+                boxVertex.Position = SetMagnitude(boxVertex.Position, GetMagnitude(boxVertex.Position) * scaleFactor);
             }
         }
 
@@ -131,6 +139,7 @@ namespace SFML_NET_3D
                 float scaleFactor = Map(boxVertex.Position.Z - boxVertex.Offset.Z, -winDepth, winDepth, 2f, 0.2f);
                 if (winViewMode == ViewMode.Orthographic) scaleFactor = 1f;
                 boxVertex.Offset = SetMagnitude(boxVertex.Offset, offsetMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
+                boxVertex.Position = SetMagnitude(boxVertex.Position, posMags[boxVertexArray.ToList.IndexOf(boxVertex)]);
             }
         }
 
