@@ -14,8 +14,11 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(5, 5, 5);
+        Vector3f boxCount = new Vector3f(12, 12, 1);
         Vector3f boxSize = new Vector3f(20, 20, 20);
+
+        bool mousePressed = false;
+        Vector2i mousePrePos = new Vector2i(0,0);
 
         public Game()
         {
@@ -28,6 +31,9 @@ namespace SFML_NET_3D
             window.SetFramerateLimit(30);
             window.Closed += OnClosed;
             window.KeyPressed += OnKeyPressed;
+            window.MouseButtonPressed += OnMouseButtonPressed;
+            window.MouseButtonReleased += OnMouseButtonReleased;
+            window.MouseMoved += OnMousePointerMoved;
 
             Initialize();
         }
@@ -60,7 +66,7 @@ namespace SFML_NET_3D
                     z * boxSize.Z * 1.1f - ((boxCount.Z - 1) * boxSize.Z * 1.1f) / 2
                 ),
                 rotation: new Vector3f(0, 0, 0),
-                fillColor: new Color((byte)((x) * 50), (byte)((y) * 50), (byte)((z) * 50)),
+                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 255), (byte)Map(y, 0, boxCount.Y, 1, 255), (byte)Map(y, 0, boxCount.Y, 1, 255)),
                 type: PrimitiveType.Quads
             );
         }
@@ -69,12 +75,6 @@ namespace SFML_NET_3D
         {
             foreach (var box in boxList)
             {
-                box.Rotation = new Vector3f
-                (
-                   Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI, -MathF.PI),
-                   Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
-                   box.Rotation.Z
-                );
                 box.Update();
             }
         }
@@ -169,9 +169,39 @@ namespace SFML_NET_3D
                     winViewMode = ViewMode.Perspective;
             }
         }
+
         private void OnClosed(object sender, EventArgs e)
         {
             window.Close();
+        }
+
+        private void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            if (e.Button == Mouse.Button.Right && !mousePressed)
+            {
+                mousePressed = true;
+            }
+        }
+
+        private void OnMousePointerMoved(object sender, MouseMoveEventArgs e)
+        {
+            if (mousePressed)
+            {
+                foreach (var box in boxList)
+                box.Rotation = new Vector3f
+                (
+                   Map(Mouse.GetPosition(window).X, 0, winSizeX, MathF.PI, -MathF.PI),
+                   Map(Mouse.GetPosition(window).Y, 0, winSizeY, MathF.PI, -MathF.PI),
+                   box.Rotation.Z
+                );
+            }
+        }
+
+        private void OnMouseButtonReleased(object sender, MouseButtonEventArgs e) {
+            if (e.Button == Mouse.Button.Right && mousePressed)
+            {
+                mousePressed = false;
+            }
         }
         #endregion
     }
