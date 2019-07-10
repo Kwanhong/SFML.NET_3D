@@ -14,8 +14,8 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(10, 1, 10);
-        Vector3f boxSize = new Vector3f(30, 30, 30);
+        Vector3f boxCount = new Vector3f(12, 1, 12);
+        Vector3f boxSize = new Vector3f(20, 20, 20);
 
         bool mousePressed = false;
         Vector2i mousePrePos = new Vector2i(0, 0);
@@ -63,21 +63,36 @@ namespace SFML_NET_3D
                 (
                     x * boxSize.X * 1.2f - ((boxCount.X - 1) * boxSize.X * 1.2f) / 2,
                     y * boxSize.Y * 1.2f - ((boxCount.Y - 1) * boxSize.Y * 1.2f) / 2,
-                    z * boxSize.Z * 1.2f - ((boxCount.Z - 1) * boxSize.Z * 1.2f) / 2
+                    z * boxSize.Z * 1.2f - ((boxCount.Z - 1) * boxSize.Z * 1.2f) / 2 + 0.0001f // Preventing Zero Exeption
                 ),
-                rotation: new Vector3f(MathF.PI / 4f,-MathF.Atan(1 / MathF.Sqrt(2)),0),
-                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 200),(byte)Map(z, 0, boxCount.Z, 1, 200) , (byte)Map(z, 0, boxCount.Z, 1, 200)),
+                rotation: new Vector3f(MathF.PI / 4f, -MathF.Atan(1 / MathF.Sqrt(2)), 0),
+                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 200), (byte)Map(z, 0, boxCount.Z, 1, 200), (byte)Map(z, 0, boxCount.Z, 1, 200)),
                 type: PrimitiveType.Quads
             );
         }
 
+        float angle = 0;
         private void Update()
         {
-            for (int i = 0; i < boxList.Count; i++)
+            for (int x = 0; x < boxCount.X; x++)
             {
-                boxList[i].SetSize(new Vector3f(30,50,30));
-                boxList[i].Update();
+                for (int y = 0; y < boxCount.Y; y++)
+                {
+                    for (int z = 0; z < boxCount.Z; z++)
+                    {
+                        float dist = Distnace(new Vector2f(x+0.5f, z+0.5f), new Vector2f(boxCount.X / 2, boxCount.Z / 2));
+                        float offset = Map(dist, 0, Distnace(new Vector2f(0, 0), new Vector2f(boxCount.X / 2, boxCount.Z / 2)), -4, 4);
+                        float theta = offset + angle;
+                        float height = 100 + 50 * MathF.Sin(theta);
+                        boxes[x, y, z].SetSize(new Vector3f(boxes[x, y, z].Size.X, height, boxes[x, y, z].Size.Z));
+                    }
+                }
             }
+
+            foreach (var box in boxList)
+                box.Update();
+
+            angle += 0.3f;
         }
 
         private void Display()
@@ -185,9 +200,17 @@ namespace SFML_NET_3D
             if (e.Code == Keyboard.Key.F6)
             {
                 if (winViewMode == ViewMode.Perspective)
+                {
                     winViewMode = ViewMode.Orthographic;
+                    winTitle = "SFML.NET 3D - View Mode : Orthographic";
+                    window.SetTitle(winTitle);
+                }
                 else
+                {
                     winViewMode = ViewMode.Perspective;
+                    winTitle = "SFML.NET 3D - View Mode : Perspective";
+                    window.SetTitle(winTitle);
+                }
             }
         }
 

@@ -229,6 +229,19 @@ namespace SFML_NET_3D
         }
 
         /// <summary>
+        /// (Vector3f)pos1과 (Vector3f)pos2 사이의 거리를 반환합니다.
+        /// </summary>
+        public static float Distnace(Vector3f pos1, Vector3f pos2)
+        {
+            return MathF.Sqrt
+            (
+                MathF.Pow(pos1.X - pos2.X, 2) +
+                MathF.Pow(pos1.Y - pos2.Y, 2) +
+                MathF.Pow(pos1.Z - pos2.Z, 2)
+            );
+        }
+
+        /// <summary>
         /// (Vector2)vector의 원점을 기준으로 한 라디안 각도를 반환합니다.
         /// </summary>
         public static float GetAngle(Vector2f vector)
