@@ -39,7 +39,7 @@ namespace SFML_NET_3D
             {
                 Vector3f prePos = pos;
                 pos = value;
-                Move(pos - prePos);
+                DoMovement(pos - prePos);
             }
         }
         public Vector3f Rotation
@@ -48,23 +48,14 @@ namespace SFML_NET_3D
             {
                 Vector3f preRot = rot;
                 rot = value;
-                Rotate(rot - preRot);
+                DoRotation(rot - preRot);
             }
         }
-        public Vector3f Size
-        {
-            get => siz; set
-            {
-                Vector3f preSiz = siz;
-                siz = value;
-                //Scale(siz - preSiz);
-            }
-        }
+        public Vector3f Size { get; set; }
 
         private Color col;
         private Vector3f pos;
         private Vector3f rot;
-        private Vector3f siz;
         private PrimitiveType typ;
         private List<float> offsetMags;
         private List<float> posMags;
@@ -84,8 +75,9 @@ namespace SFML_NET_3D
             this.Size = size;
             SetVertexState();
             this.Position = position;
+            DoMovement(Position);
             this.Rotation = rotation;
-            Rotate(Rotation);
+            DoRotation(Rotation);
         }
 
         private void Initialize(Vector3f size, Vector3f position, Vector3f rotation, Color fillColor, PrimitiveType type = PrimitiveType.LineStrip)
@@ -104,7 +96,7 @@ namespace SFML_NET_3D
             SetVertexState();
             this.Position = position;
             this.Rotation = rotation;
-            Rotate(Rotation);
+            DoRotation(Rotation);
         }
 
         private void SetVertexState()
@@ -173,7 +165,15 @@ namespace SFML_NET_3D
             }
         }
 
-        public void Rotate(Vector3f rotation)
+        public void Rotate(Vector3f rotation) {
+            Rotation += rotation;
+        }
+
+        public void Move(Vector3f movement) {
+            Position += movement;
+        }
+
+        private void DoRotation(Vector3f rotation)
         {
             foreach (var boxVertex in BoxVertexArray.ToList)
             {
@@ -182,7 +182,7 @@ namespace SFML_NET_3D
             }
         }
 
-        public void Move(Vector3f movement)
+        private void DoMovement(Vector3f movement)
         {
             foreach (var boxVertex in BoxVertexArray.ToList)
             {
@@ -193,10 +193,16 @@ namespace SFML_NET_3D
         public void Scale(Vector3f scaleFactor)
         {
             Retire();
-            Initialize(Multiply(Size, new Vector3f(1.01f, 1, 1)), Position, Rotation, FillColor, Type);
+            Initialize(Multiply(Size, scaleFactor), Position, Rotation, FillColor, Type);
         }
 
-        public void Retire()
+        public void SetSize(Vector3f size)
+        {
+            Retire();
+            Initialize(size, Position, Rotation, FillColor, Type);
+        }
+
+        private void Retire()
         {
             BoxVertexArray.RemoveVertexFromRenderer();
         }

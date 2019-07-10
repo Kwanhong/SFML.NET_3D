@@ -14,8 +14,8 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(1, 10, 10);
-        Vector3f boxSize = new Vector3f(20, 20, 20);
+        Vector3f boxCount = new Vector3f(10, 1, 10);
+        Vector3f boxSize = new Vector3f(30, 30, 30);
 
         bool mousePressed = false;
         Vector2i mousePrePos = new Vector2i(0, 0);
@@ -65,8 +65,8 @@ namespace SFML_NET_3D
                     y * boxSize.Y * 1.2f - ((boxCount.Y - 1) * boxSize.Y * 1.2f) / 2,
                     z * boxSize.Z * 1.2f - ((boxCount.Z - 1) * boxSize.Z * 1.2f) / 2
                 ),
-                rotation: new Vector3f(MathF.PI / 4f, -MathF.Atan(1 / MathF.Sqrt(2)),-MathF.PI/2),
-                fillColor: new Color((byte)Map(y, 0, boxCount.Y, 1, 255), (byte)Map(z, 0, boxCount.Z, 1, 255), (byte)Map(z, 0, boxCount.Z, 1, 255)),
+                rotation: new Vector3f(MathF.PI / 4f,-MathF.Atan(1 / MathF.Sqrt(2)),0),
+                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 200),(byte)Map(z, 0, boxCount.Z, 1, 200) , (byte)Map(z, 0, boxCount.Z, 1, 200)),
                 type: PrimitiveType.Quads
             );
         }
@@ -75,7 +75,7 @@ namespace SFML_NET_3D
         {
             for (int i = 0; i < boxList.Count; i++)
             {
-                boxList[i].Scale(new Vector3f(1,1,1.2f));
+                boxList[i].SetSize(new Vector3f(30,50,30));
                 boxList[i].Update();
             }
         }
@@ -123,32 +123,52 @@ namespace SFML_NET_3D
             if (Keyboard.IsKeyPressed(Keyboard.Key.W))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(0, 0.05f, 0));
+                    box.Rotation += new Vector3f(0, 0.05f, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.A))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(0.05f, 0, 0));
+                    box.Rotation += new Vector3f(0.05f, 0, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.S))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(0, -0.05f, 0));
+                    box.Rotation += new Vector3f(0, -0.05f, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(-0.05f, 0, 0));
+                    box.Rotation += new Vector3f(-0.05f, 0, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.Q))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(0, 0, 0.05f));
+                    box.Rotation += new Vector3f(0, 0, 0.05f);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.E))
             {
                 foreach (var box in boxList)
-                    box.Rotate(new Vector3f(0, 0, -0.05f));
+                    box.Rotation += new Vector3f(0, 0, -0.05f);
+            }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Up))
+            {
+                foreach (var box in boxList)
+                    box.Position += new Vector3f(0, 0, 10);
+            }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
+            {
+                foreach (var box in boxList)
+                    box.Position += new Vector3f(-10, 0, 0);
+            }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Down))
+            {
+                foreach (var box in boxList)
+                    box.Position += new Vector3f(0, 0, -10);
+            }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
+            {
+                foreach (var box in boxList)
+                    box.Position += new Vector3f(10, 0, 0);
             }
         }
 
