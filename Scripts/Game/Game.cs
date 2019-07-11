@@ -14,7 +14,7 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(12, 1, 12);
+        Vector3f boxCount = new Vector3f(15, 1, 15);
         Vector3f boxSize = new Vector3f(20, 20, 20);
 
         bool mousePressed = false;
@@ -61,12 +61,22 @@ namespace SFML_NET_3D
                 size: boxSize,
                 position: new Vector3f
                 (
-                    x * boxSize.X * 1.2f - ((boxCount.X - 1) * boxSize.X * 1.2f) / 2,
-                    y * boxSize.Y * 1.2f - ((boxCount.Y - 1) * boxSize.Y * 1.2f) / 2,
-                    z * boxSize.Z * 1.2f - ((boxCount.Z - 1) * boxSize.Z * 1.2f) / 2 + 0.0001f // Preventing Zero Exeption
+                    x * boxSize.X - ((boxCount.X - 1) * boxSize.X) / 2,
+                    y * boxSize.Y - ((boxCount.Y - 1) * boxSize.Y) / 2,
+                    z * boxSize.Z - ((boxCount.Z - 1) * boxSize.Z) / 2 + 0.0001f // Preventing Zero Exeption
                 ),
-                rotation: new Vector3f(MathF.PI / 4f, -MathF.Atan(1 / MathF.Sqrt(2)), 0),
-                fillColor: new Color((byte)Map(x, 0, boxCount.X, 1, 200), (byte)Map(z, 0, boxCount.Z, 1, 200), (byte)Map(z, 0, boxCount.Z, 1, 200)),
+                rotation: new Vector3f
+                (
+                    MathF.PI / 4f, 
+                    -MathF.Atan(1 / MathF.Sqrt(2)), 
+                    0
+                ),
+                fillColor: new Color
+                (
+                    (byte)(Map(x, 0, boxCount.X, 0, 30) + 150),  
+                    (byte)(Map(y, 0, boxCount.Y, 0, 30) + 50),
+                    (byte)(Map(z, 0, boxCount.Z, 0, 30) + 30)
+                ),
                 type: PrimitiveType.Quads
             );
         }
@@ -83,8 +93,8 @@ namespace SFML_NET_3D
                         float dist = Distnace(new Vector2f(x+0.5f, z+0.5f), new Vector2f(boxCount.X / 2, boxCount.Z / 2));
                         float offset = Map(dist, 0, Distnace(new Vector2f(0, 0), new Vector2f(boxCount.X / 2, boxCount.Z / 2)), -4, 4);
                         float theta = offset + angle;
-                        float height = 100 + 50 * MathF.Sin(theta);
-                        boxes[x, y, z].SetSize(new Vector3f(boxes[x, y, z].Size.X, height, boxes[x, y, z].Size.Z));
+                        float height = 180 + 90 * MathF.Sin(theta);
+                        boxes[x, y, z].SetSize(new Vector3f(boxSize.X, height, boxSize.Y));
                     }
                 }
             }
@@ -92,7 +102,7 @@ namespace SFML_NET_3D
             foreach (var box in boxList)
                 box.Update();
 
-            angle += 0.3f;
+            angle += 0.2f;
         }
 
         private void Display()
