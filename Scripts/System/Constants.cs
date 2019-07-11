@@ -11,7 +11,7 @@ namespace SFML_NET_3D
 
         public const uint winSizeX = 800;
         public const uint winSizeY = 800;
-        public const uint winDepth = 800;
+        public const uint winDepth = 300;
 
         public const string winTitle = "SFML.NET 3D";
         public static Styles winStyle = Styles.None;
