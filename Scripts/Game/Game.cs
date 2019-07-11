@@ -14,7 +14,7 @@ namespace SFML_NET_3D
     {
         Box[,,] boxes;
         List<Box> list;
-        Vector3f boxCount = new Vector3f(5, 5, 5);
+        Vector3f boxCount = new Vector3f(10, 1, 1);
         Vector3f boxSize = new Vector3f(50, 50, 50);
         Vector3f bigBoxSize = new Vector3f(300, 300, 300);
 
@@ -65,7 +65,7 @@ namespace SFML_NET_3D
                 //Map(z, 0, boxCount.Z, winDepth / (boxCount.Z + 1), winDepth)
                 ),
 
-                new Vector3f(0, 0, 0), //(float)color, (float)((color * 5) % 255), (float)((color * 10) % 255)
+                new Vector3f(color, color, color), //(float)color, (float)((color * 5) % 255), (float)((color * 10) % 255)
 
                 new Color(color, (byte)((color * 5) % 255), (byte)((color * 5) % 255)),
 
