@@ -1,28 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Works\\Personal\\SFML.NET_3D\\sfml.net_3d.csproj": {}
+    "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj": {}
   },
   "projects": {
-    "C:\\Works\\Personal\\SFML.NET_3D\\sfml.net_3d.csproj": {
+    "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Works\\Personal\\SFML.NET_3D\\sfml.net_3d.csproj",
+        "projectUniqueName": "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj",
         "projectName": "sfml.net_3d",
-        "projectPath": "C:\\Works\\Personal\\SFML.NET_3D\\sfml.net_3d.csproj",
-        "packagesPath": "C:\\Users\\rhksg\\.nuget\\packages\\",
-        "outputPath": "C:\\Works\\Personal\\SFML.NET_3D\\obj\\",
+        "projectPath": "D:\\Personals\\SFML.NET_3D\\sfml.net_3d.csproj",
+        "packagesPath": "C:\\Users\\KwanHong\\.nuget\\packages\\",
+        "outputPath": "D:\\Personals\\SFML.NET_3D\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\rhksg\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\KwanHong\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
