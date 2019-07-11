@@ -12,6 +12,8 @@ namespace SFML_NET_3D
 {
     class Game
     {
+        NoiseFactors noiseFactors;
+        float[] noise;
         Box[,,] boxes;
         List<Box> boxList;
         Vector3f boxCount = new Vector3f(15, 1, 15);
@@ -40,6 +42,8 @@ namespace SFML_NET_3D
 
         private void Initialize()
         {
+            noiseFactors = new NoiseFactors(interval:10,randomSeed:new Random().Next(255));
+            noise = Noise(noiseFactors);
             Renderer.Clear();
 
             boxes = new Box[(int)boxCount.X, (int)boxCount.Y, (int)boxCount.Z];
@@ -67,13 +71,13 @@ namespace SFML_NET_3D
                 ),
                 rotation: new Vector3f
                 (
-                    MathF.PI / 4f, 
-                    -MathF.Atan(1 / MathF.Sqrt(2)), 
+                    MathF.PI / 4f,
+                    -MathF.Atan(1 / MathF.Sqrt(2)),
                     0
                 ),
                 fillColor: new Color
                 (
-                    (byte)(Map(x, 0, boxCount.X, 0, 30) + 150),  
+                    (byte)(Map(x, 0, boxCount.X, 0, 30) + 150),
                     (byte)(Map(y, 0, boxCount.Y, 0, 30) + 50),
                     (byte)(Map(z, 0, boxCount.Z, 0, 30) + 30)
                 ),
@@ -81,7 +85,7 @@ namespace SFML_NET_3D
             );
         }
 
-        float angle = 0;
+        float offset1 = 0;
         private void Update()
         {
             for (int x = 0; x < boxCount.X; x++)
@@ -90,10 +94,9 @@ namespace SFML_NET_3D
                 {
                     for (int z = 0; z < boxCount.Z; z++)
                     {
-                        float dist = Distnace(new Vector2f(x+0.5f, z+0.5f), new Vector2f(boxCount.X / 2, boxCount.Z / 2));
-                        float offset = Map(dist, 0, Distnace(new Vector2f(0, 0), new Vector2f(boxCount.X / 2, boxCount.Z / 2)), -4, 4);
-                        float theta = offset + angle;
-                        float height = 180 + 90 * MathF.Sin(theta);
+                        float dist = Distnace(new Vector2f(x + 0.5f, z + 0.5f), new Vector2f(boxCount.X / 2, boxCount.Z / 2));
+                        float offset2 = Map(dist, 0, Distnace(new Vector2f(0, 0), new Vector2f(boxCount.X / 2, boxCount.Z / 2)), 0, 1000);
+                        float height = 180 + 90 * Map(noise[(int)(offset1+offset2)%noiseFactors.Size],GetMin(noise),GetMax(noise),-1,1);
                         boxes[x, y, z].SetSize(new Vector3f(boxSize.X, height, boxSize.Y));
                     }
                 }
@@ -102,7 +105,10 @@ namespace SFML_NET_3D
             foreach (var box in boxList)
                 box.Update();
 
-            angle += 0.2f;
+            if (offset1 <= noiseFactors.Size - noiseFactors.Interval*1.01f)
+                offset1 += noiseFactors.Interval;
+            else
+                offset1 = 0;
         }
 
         private void Display()
