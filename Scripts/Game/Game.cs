@@ -16,8 +16,8 @@ namespace SFML_NET_3D
         float[] noise;
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(15, 1, 15);
-        Vector3f boxSize = new Vector3f(20, 20, 20);
+        Vector3f boxCount = new Vector3f(20, 1, 20);
+        Vector3f boxSize = new Vector3f(12, 12, 12);
 
         bool mousePressed = false;
         Vector2i mousePrePos = new Vector2i(0, 0);
@@ -44,9 +44,11 @@ namespace SFML_NET_3D
         {
             noiseFactors = new NoiseFactors
             (
+                size: 800,
+                octave: 10,
                 interval: 10,
                 randomSeed: new Random().Next(255),
-                softness: 3
+                softness: 2.35f
             );
             noise = Noise(noiseFactors);
             Renderer.Clear();
@@ -125,13 +127,13 @@ namespace SFML_NET_3D
                 VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
                 line[0] = new Vertex(new Vector2f
                 (
-                    Map(i - 1, 0, noiseFactors.Size, 0, winSizeX),
-                    Map(noise[i - 1], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+                    Map(i, 0, noiseFactors.Size, 0, winSizeX),
+                    Map(noise[((i - 1) + (int)offset1) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
                 ), Color.White);
                 line[1] = new Vertex(new Vector2f
                 (
                     Map(i, 0, noiseFactors.Size, 0, winSizeX),
-                    Map(noise[i], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+                    Map(noise[(i + (int)offset1) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
                 ), Color.White);
                 window.Draw(line);
             }
