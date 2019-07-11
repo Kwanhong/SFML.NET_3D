@@ -75,7 +75,7 @@ namespace SFML_NET_3D
         {
             for (int i = 0; i < boxList.Count; i++)
             {
-                boxList[i].SetSize(new Vector3f(30,50,30));
+                boxList[i].SetSize(new Vector3f(30,boxList[i].Size.Y * 1.025f,30));
                 boxList[i].Update();
             }
         }
