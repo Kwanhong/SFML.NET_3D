@@ -165,11 +165,13 @@ namespace SFML_NET_3D
             }
         }
 
-        public void Rotate(Vector3f rotation) {
+        public void Rotate(Vector3f rotation)
+        {
             Rotation += rotation;
         }
 
-        public void Move(Vector3f movement) {
+        public void Move(Vector3f movement)
+        {
             Position += movement;
         }
 

@@ -16,8 +16,8 @@ namespace SFML_NET_3D
         float[] noise;
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(20, 1, 20);
-        Vector3f boxSize = new Vector3f(12, 12, 12);
+        Vector3f boxCount = new Vector3f(15, 1, 15);
+        Vector3f boxSize = new Vector3f(20, 20, 20);
 
         bool mousePressed = false;
         Vector2i mousePrePos = new Vector2i(0, 0);
@@ -46,7 +46,7 @@ namespace SFML_NET_3D
             (
                 size: 800,
                 octave: 10,
-                interval: 10,
+                interval: 5,
                 randomSeed: new Random().Next(255),
                 softness: 2.35f
             );
@@ -84,9 +84,10 @@ namespace SFML_NET_3D
                 ),
                 fillColor: new Color
                 (
-                    (byte)(Map(x, 0, boxCount.X, 0, 30) + 150),
-                    (byte)(Map(y, 0, boxCount.Y, 0, 30) + 50),
-                    (byte)(Map(z, 0, boxCount.Z, 0, 30) + 30)
+                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
+                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
+                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
+                    255
                 ),
                 type: PrimitiveType.Quads
             );
@@ -104,7 +105,23 @@ namespace SFML_NET_3D
                         float dist = Distnace(new Vector2f(x + 0.5f, z + 0.5f), new Vector2f(boxCount.X / 2, boxCount.Z / 2));
                         float offset2 = Map(dist, 0, Distnace(new Vector2f(0, 0), new Vector2f(boxCount.X / 2, boxCount.Z / 2)), 0, 1000);
                         float height = 180 + 90 * Map(noise[(int)(offset1 + offset2) % noiseFactors.Size], GetMin(noise), GetMax(noise), -1, 1);
+
                         boxes[x, y, z].SetSize(new Vector3f(boxSize.X, height, boxSize.Y));
+                        //boxes[x, y, z].SetSize(boxes[x,y,z].Size);
+
+                        byte r = (byte)(Map(x, 0, boxCount.X, 0, 255));
+                        byte g = (byte)(Map(z, 0, boxCount.Z, 0, 255));
+                        byte b = (byte)(Map(x + z, 0, boxCount.X + boxCount.Z, 0, 255));
+
+                        Color fillColor = new Color
+                        (
+                            (byte)(Map(noise[(int)(offset1 + offset2) % noiseFactors.Size], GetMin(noise), GetMax(noise), 0, r)),
+                            (byte)(Map(noise[(int)(offset1 + offset2) % noiseFactors.Size], GetMin(noise), GetMax(noise), 0, g)),
+                            (byte)(Map(noise[(int)(offset1 + offset2) % noiseFactors.Size], GetMin(noise), GetMax(noise), 0, b)),
+                            255
+                        );
+                        boxes[x, y, z].FillColor = fillColor;
+                        //boxes[x, y, z].FillColor = new Color((byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255),(byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255),(byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255));
                     }
                 }
             }
@@ -120,8 +137,15 @@ namespace SFML_NET_3D
 
         private void Display()
         {
+            DisplayNoiseWave();
             Renderer.Render();
 
+            window.Display();
+            window.Clear(new Color(25, 25, 25));
+        }
+
+        private void DisplayNoiseWave()
+        {
             for (int i = 1; i < noiseFactors.Size; i++)
             {
                 VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
@@ -137,9 +161,6 @@ namespace SFML_NET_3D
                 ), Color.White);
                 window.Draw(line);
             }
-
-            window.Display();
-            window.Clear(new Color(25, 25, 25));
         }
 
         private void LateUpdate()
@@ -161,7 +182,6 @@ namespace SFML_NET_3D
             }
         }
 
-        #region EVENTS 
         private void HandleEvent()
         {
             window.DispatchEvents();
@@ -173,27 +193,28 @@ namespace SFML_NET_3D
             OnKeyPressed();
         }
 
+        #region EVENTS 
         private void OnKeyPressed()
         {
             if (Keyboard.IsKeyPressed(Keyboard.Key.W))
             {
                 foreach (var box in boxList)
-                    box.Rotation += new Vector3f(0, 0.05f, 0);
+                    box.Rotation += new Vector3f(0, -0.05f, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.A))
             {
                 foreach (var box in boxList)
-                    box.Rotation += new Vector3f(0.05f, 0, 0);
+                    box.Rotation += new Vector3f(-0.05f, 0, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.S))
             {
                 foreach (var box in boxList)
-                    box.Rotation += new Vector3f(0, -0.05f, 0);
+                    box.Rotation += new Vector3f(0, 0.05f, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
             {
                 foreach (var box in boxList)
-                    box.Rotation += new Vector3f(-0.05f, 0, 0);
+                    box.Rotation += new Vector3f(0.05f, 0, 0);
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.Q))
             {
