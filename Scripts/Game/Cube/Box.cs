@@ -123,6 +123,7 @@ namespace SFML_NET_3D
                 ));
 
             BoxVertexArray.ApplyVertexToRenderer();
+            //Renderer.Add(this);
         }
 
         public void Update()
@@ -141,6 +142,11 @@ namespace SFML_NET_3D
         public void LateUpdate()
         {
             SubtractPerspectivePos();
+        }
+
+        public void Display()
+        {
+            BoxVertexArray.Display();
         }
 
         private void AddPerspectivePos()
@@ -207,6 +213,7 @@ namespace SFML_NET_3D
         private void Retire()
         {
             BoxVertexArray.RemoveVertexFromRenderer();
+            //Renderer.Remove(this);
         }
     }
 }

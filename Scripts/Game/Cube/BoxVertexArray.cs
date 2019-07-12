@@ -61,6 +61,21 @@ namespace SFML_NET_3D
             };
         }
 
+        public void Display()
+        {
+            List<PlaneVertexArray> list = new List<PlaneVertexArray>();
+            for (int i = 0; i < 6; i++)
+            {
+                SetPlaneData(out planes[i], i);
+                list.Add(planes[i]);
+            }
+
+            list = Renderer.SortByZOrder(list, 0, list.Count - 1);
+
+            for (int i = 0; i < 6; i++)
+                list[i].Display();
+        }
+
         public void Append(BoxVertex vertex)
         {
             list.Add(vertex);
@@ -75,7 +90,8 @@ namespace SFML_NET_3D
             }
         }
 
-        public void RemoveVertexFromRenderer(){
+        public void RemoveVertexFromRenderer()
+        {
             for (int i = 0; i < 6; i++)
             {
                 if (planes[i] == null) return;

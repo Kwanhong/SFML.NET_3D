@@ -30,7 +30,7 @@ namespace SFML_NET_3D
 
         private void Awake()
         {
-            window.SetFramerateLimit(30);
+            window.SetFramerateLimit(60);
             window.Closed += OnClosed;
             window.KeyPressed += OnKeyPressed;
             window.MouseButtonPressed += OnMouseButtonPressed;
@@ -46,7 +46,7 @@ namespace SFML_NET_3D
             (
                 size: 800,
                 octave: 10,
-                interval: 5,
+                interval: 10,
                 randomSeed: new Random().Next(255),
                 softness: 2.35f
             );
