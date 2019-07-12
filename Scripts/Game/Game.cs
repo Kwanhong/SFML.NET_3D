@@ -16,8 +16,8 @@ namespace SFML_NET_3D
         float[] noise;
         Box[,,] boxes;
         List<Box> boxList;
-        Vector3f boxCount = new Vector3f(15, 1, 15);
-        Vector3f boxSize = new Vector3f(20, 20, 20);
+        Vector3f boxCount = new Vector3f(21, 1, 21);
+        Vector3f boxSize = new Vector3f(15, 15, 15);
 
         bool mousePressed = false;
         Vector2i mousePrePos = new Vector2i(0, 0);
@@ -82,13 +82,7 @@ namespace SFML_NET_3D
                     -MathF.Atan(1 / MathF.Sqrt(2)),
                     0
                 ),
-                fillColor: new Color
-                (
-                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
-                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
-                    255,//(byte)(Map(noise[(int)offset1], GetMin(noise), GetMax(noise), 0, 255)),
-                    255
-                ),
+                fillColor: Color.Black,
                 type: PrimitiveType.Quads
             );
         }
@@ -137,30 +131,42 @@ namespace SFML_NET_3D
 
         private void Display()
         {
-            DisplayNoiseWave();
+            DisplayNoiseWave(new Color(255, 255, 255, 255), 20);
             Renderer.Render();
 
             window.Display();
             window.Clear(new Color(25, 25, 25));
         }
 
-        private void DisplayNoiseWave()
+        private void DisplayNoiseWave(Color color, float weight)
         {
-            for (int i = 1; i < noiseFactors.Size; i++)
+            int offset = (int)offset1;
+
+            VertexArray line = new VertexArray(PrimitiveType.LineStrip);
+            for (int i = 0; i < noiseFactors.Size; i+=(int)weight)
             {
-                VertexArray line = new VertexArray(PrimitiveType.Lines, 2);
-                line[0] = new Vertex(new Vector2f
+                line.Append(new Vertex(new Vector2f
                 (
-                    Map(i, 0, noiseFactors.Size, 0, winSizeX),
-                    Map(noise[((i - 1) + (int)offset1) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
-                ), Color.White);
-                line[1] = new Vertex(new Vector2f
+                    Map(i, 0, noiseFactors.Size, 0, winSizeX) - weight / 2,
+                    Map(noise[(i + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f - weight / 2
+                ), color));
+                line.Append(new Vertex(new Vector2f
                 (
-                    Map(i, 0, noiseFactors.Size, 0, winSizeX),
-                    Map(noise[(i + (int)offset1) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
-                ), Color.White);
-                window.Draw(line);
+                    Map(i, 0, noiseFactors.Size, 0, winSizeX) + weight / 2,
+                    Map(noise[(i + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f - weight / 2
+                ), color));
+                line.Append(new Vertex(new Vector2f
+                (
+                    Map(i, 0, noiseFactors.Size, 0, winSizeX) + weight / 2,
+                    Map(noise[(i + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f + weight / 2
+                ), color));
+                line.Append(new Vertex(new Vector2f
+                (
+                    Map(i, 0, noiseFactors.Size, 0, winSizeX) - weight / 2,
+                    Map(noise[(i + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise), -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f + weight / 2
+                ), color));
             }
+            window.Draw(line);
         }
 
         private void LateUpdate()

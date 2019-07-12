@@ -122,8 +122,8 @@ namespace SFML_NET_3D
                     side: sides[i]
                 ));
 
-            BoxVertexArray.ApplyVertexToRenderer();
-            //Renderer.Add(this);
+            //BoxVertexArray.ApplyVertexToRenderer();
+            Renderer.Add(this);
         }
 
         public void Update()
@@ -212,8 +212,8 @@ namespace SFML_NET_3D
 
         private void Retire()
         {
-            BoxVertexArray.RemoveVertexFromRenderer();
-            //Renderer.Remove(this);
+            //BoxVertexArray.RemoveVertexFromRenderer();
+            Renderer.Remove(this);
         }
     }
 }
