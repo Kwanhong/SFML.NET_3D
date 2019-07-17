@@ -46,7 +46,7 @@ namespace SFML_NET_3D
             (
                 size: 800,
                 octave: 10,
-                interval: 1,
+                interval: 10,
                 randomSeed: new Random().Next(255),
                 softness: 2.35f
             );
@@ -101,7 +101,6 @@ namespace SFML_NET_3D
                         float height = 180 + 90 * Map(noise[(int)(offset1 + offset2) % noiseFactors.Size], GetMin(noise), GetMax(noise), -1, 1);
 
                         boxes[x, y, z].SetSize(new Vector3f(boxSize.X, height, boxSize.Y));
-                        //boxes[x, y, z].SetSize(boxes[x,y,z].Size);
 
                         byte r = (byte)(Map(x, 0, boxCount.X, 0, 255));
                         byte g = (byte)(Map(z, 0, boxCount.Z, 0, 255));
@@ -115,7 +114,6 @@ namespace SFML_NET_3D
                             255
                         );
                         boxes[x, y, z].FillColor = fillColor;
-                        //boxes[x, y, z].FillColor = new Color((byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255),(byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255),(byte)Map(boxes[x,y,z].Position.Z,-winDepth,winDepth,0,255));
                     }
                 }
             }
@@ -132,62 +130,92 @@ namespace SFML_NET_3D
         private void Display()
         {
             Renderer.Render();
-            DisplayNoiseWave(new Color(255, 255, 255, 100), 20);
+            DisplayNoiseWave(new Color(255, 255, 255, 75), 10, 10);
 
             window.Display();
             window.Clear(new Color(25, 25, 25));
         }
 
-        private void DisplayNoiseWave(Color color, float weight)
+        private void DisplayNoiseWave(Color color, float weight, int interval)
         {
-            int offset = (int)offset1;
-
             VertexArray line = new VertexArray(PrimitiveType.LineStrip);
+            line = new VertexArray(PrimitiveType.Quads);
 
-            Vector2f prevPos = new Vector2f
-            (
-                Map(0, 0, noiseFactors.Size, 0, winSizeX),
-                Map(noise[(offset) % noiseFactors.Size], GetMin(noise), GetMax(noise),
-                    -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
-            );
-            Vector2f currPos = new Vector2f
-            (
-                Map((int)weight, 0, noiseFactors.Size, 0, winSizeX),
-                Map(noise[((int)weight + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise),
-                    -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
-            );
+            Vector2f prevPos;
+            Vector2f currPos;
+            Vector2f nextPos;
+            Vector2f vector;
 
-            Vector2f vector = currPos - prevPos;
-            vector = RotateVector(vector, MathF.PI/2);
-            vector = SetMagnitude(vector, weight);
+            Vertex v1;
+            Vertex v2;
 
-            Vertex v1 = new Vertex(prevPos, color);
-            Vertex v2 = new Vertex(v1.Position + vector, color);
+            InitializeFactors(color, weight, interval, out prevPos, out currPos, out nextPos, out vector, out v1, out v2);
 
-            for (int i = (int)weight; i < noiseFactors.Size; i += (int)weight)
+            for (int i = interval; i < noiseFactors.Size; i += interval)
             {
-                currPos = new Vector2f
-                (
-                    Map(i, 0, noiseFactors.Size, 0, winSizeX),
-                    Map(noise[(i + offset) % noiseFactors.Size], GetMin(noise), GetMax(noise),
-                        -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
-                );
-
-                line.Append(v1);
                 line.Append(v2);
+                line.Append(v1);
 
-                vector = currPos - prevPos;
-                vector = RotateVector(vector, ToRadian(90));
+                Vector2f vector1 = Normalize(prevPos - currPos);
+                Vector2f vector2 = Normalize(nextPos - currPos);
+
+                vector = (vector1 + vector2) * 0.5f;
+                if (vector.Y > 0) vector *= -1;
                 vector = SetMagnitude(vector, weight);
 
-                v1 = new Vertex(prevPos, color);
+                v1 = new Vertex(currPos, color);
                 v2 = new Vertex(v1.Position + vector, color);
-                line.Append(v2);
+
                 line.Append(v1);
+                line.Append(v2);
 
                 prevPos = currPos;
+                currPos = new Vector2f
+                (
+                    Map(i, 0, noiseFactors.Size, -interval * 2, winSizeX + interval * 2),
+                    Map(noise[(i + (int)offset1) % noiseFactors.Size], GetMin(noise), GetMax(noise),
+                        -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+                );
+                nextPos = new Vector2f
+                (
+                    Map(i + (int)interval, 0, noiseFactors.Size, -interval * 2, winSizeX + interval * 2),
+                    Map(noise[((int)(i + interval + offset1)) % noiseFactors.Size], GetMin(noise), GetMax(noise),
+                        -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+                );
             }
             window.Draw(line);
+        }
+
+        private void InitializeFactors(Color color, float weight, float interval, out Vector2f prevPos, out Vector2f currPos, out Vector2f nextPos, out Vector2f vector, out Vertex v1, out Vertex v2)
+        {
+            prevPos = new Vector2f
+            (
+                Map(0, 0, noiseFactors.Size, -interval * 2, winSizeX + interval * 2),
+                Map(noise[(int)offset1 % noiseFactors.Size], GetMin(noise), GetMax(noise),
+                    -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+            );
+            currPos = new Vector2f
+            (
+                Map((int)interval, 0, noiseFactors.Size, -interval * 2, winSizeX + interval * 2),
+                Map(noise[((int)(interval + offset1)) % noiseFactors.Size], GetMin(noise), GetMax(noise),
+                    -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+            );
+            nextPos = new Vector2f
+            (
+                Map((int)interval * 2, 0, noiseFactors.Size, -interval * 2, winSizeX + interval * 2),
+                Map(noise[((int)(interval * 2 + offset1)) % noiseFactors.Size], GetMin(noise), GetMax(noise),
+                    -winSizeY * 0.25f, winSizeY * 0.25f) + winSizeY * 0.5f
+            );
+
+            Vector2f vector1 = Normalize(prevPos - currPos);
+            Vector2f vector2 = Normalize(nextPos - currPos);
+
+            vector = (vector1 + vector2) * 0.5f;
+            if (vector.Y > 0) vector *= -1;
+            vector = SetMagnitude(vector, weight);
+
+            v1 = new Vertex(currPos, color);
+            v2 = new Vertex(v1.Position + vector, color);
         }
 
         private void LateUpdate()
